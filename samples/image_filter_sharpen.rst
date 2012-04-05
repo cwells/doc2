@@ -1,7 +1,6 @@
-=======
+====================
 image_filter_sharpen
-========
- 
+==================== 
 Syntax: **image_filter_sharpen** *percent* 
 Default: ``0`` 
 Context: ``http, server, location`` 

@@ -1,7 +1,6 @@
-=======
+============
 image_filter
-========
- 
+============ 
 Syntax: **image_filter** ``off`` 
         **image_filter** ``test`` 
         **image_filter** ``size`` 

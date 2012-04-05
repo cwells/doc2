@@ -1,7 +1,6 @@
-=======
+=========================
 image_filter_transparency
-========
- 
+========================= 
 Syntax: **image_filter_transparency** ``on``|``off`` 
 Default: ``on`` 
 Context: ``http, server, location`` 
