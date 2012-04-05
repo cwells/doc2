@@ -236,13 +236,14 @@ available_formats = [os.path.splitext (f)[0] for f in glob ("*.cfg")]
 
 parser = OptionParser ()
 parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src') 
+parser.add_option ("-s", "--source", dest="srcdir", help="source directory for XML files", metavar="SRC")
+parser.add_option ("-d", "--destination", dest="dest_dir", help="destination directory", metavar="DIR")
+parser.add_option ("-p", "--pattern", dest="pattern", help="convert files matching pattern", metavar="PATTERN")
 parser.add_option ("-r", "--root", dest="root_element", help="the root element, files will be split at every one of these", metavar="ROOT")
 parser.add_option ("-a", "--attribute", dest="fname_attribute", help="files will be named for this attribute of the ROOT element", metavar="ATTR")
 parser.add_option ("-f", "--format", dest="format", help="output format [{0}]".format ('|'.join (available_formats)), metavar="FORMAT")
-parser.add_option ("-d", "--destination", dest="dest_dir", help="destination directory", metavar="DIR")
-parser.add_option ("-p", "--pattern", dest="pattern", help="convert files matching pattern", metavar="PATTERN")
 parser.add_option ("-v", "--verbosity", dest="verbosity", help="set verbosity [{0}]".format ('|'.join (verbosity_levels)), metavar="LEVEL")
-parser.add_option ("-s", "--source", dest="srcdir", help="source directory for XML files", metavar="SRC")
+
 (options, args) = parser.parse_args ()
 
 if options.format not in available_formats:
