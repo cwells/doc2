@@ -6,21 +6,19 @@ doc2.py is a utility for converting XML documents into various text formats (wik
 usage::
 
   ./doc2.py --help
-  Usage: doc2.py [options]
 
   Options:
     -h, --help            show this help message and exit
-    -r ROOT, --root=ROOT  the root element, files will be split at every one of
-                          these
-    -a ATTR, --attribute=ATTR
-                          files will be named for this attribute of the ROOT
-                          element
-    -f FORMAT, --format=FORMAT
-                          output format [text|mediawiki]
+    -s SRC, --source=SRC  source directory for XML files
     -d DIR, --destination=DIR
                           destination directory
     -p PATTERN, --pattern=PATTERN
                           convert files matching pattern
+    -r ROOT, --root=ROOT  the root element, files will be split at every one of these
+    -a ATTR, --attribute=ATTR
+                          files will be named for this attribute of the ROOT element
+    -f FORMAT, --format=FORMAT
+                          output format [text|mediawiki]
     -v LEVEL, --verbosity=LEVEL
                           set verbosity [crit|warn|info|debug|error]
 
