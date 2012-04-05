@@ -5,9 +5,9 @@ Section [info]
 ==============
 This section contains info about the config, as well as some defaults:
 
-description = A general description of the config 
-extension = the extension to use for generated files
-directory = the directory to output generated files
+:description: A general description of the config 
+:extension: the extension to use for generated files
+:directory: the directory to output generated files
 
 Other options may be included (author, version, etc), but will be ignored.
 
@@ -28,7 +28,7 @@ Section [defines]
 =================
 This section allows you to define strings that can be substituted into the [rules] section.  These 
 are not really variables, rather they are interpolated into the block.  If you aren't careful, this 
-can lead to mistakes.  For example:
+can lead to mistakes.  For example::
 
     [defines]
     newline = "\n"
@@ -37,7 +37,7 @@ can lead to mistakes.  For example:
     ^/foo/bar$:
         prefix = "$newline"
 
-would result in 
+would result in::
 
     [rules]
     ^/foo/bar$:
@@ -60,12 +60,12 @@ means you should put more specific rules above more general ones.
 
 Once a rule is located, the rule's block is evaluated as Python code. 
 
-A rule consists of the following:
+A rule consists of the following::
 
     [regular expression]:
         [directives | nothing]
 
-For example:
+For example::
 
     ^/foo/bar.*/baz$:
         debug = True
@@ -76,69 +76,69 @@ A rule may set special variables that control the generated output:
 
 Variables  (type, default) 
 --------------------------
-debug    (boolean, False) - cause some output to be generated whenever this rule is matched
-discard  (boolean, False) - causes the current element to be discarded
-replace  (string, None)   - replace the current element with string
-combine  (boolean, False) - combine all similar sibling elements into a single comma-separated string
-sanitize (boolean, True)  - replaces non-ascii characters with ascii equivalents
-collapse (boolean, True)  - collapses sequences of whitespace and newlines into a single space
-strip    (boolean, False) - removes whitespace from both ends of element
-format   (string, None)   - format the element using string
-prefix   (string, None)   - prepend string to element
-suffix   (string, None)   - append string to element
-indent   (integer, 0)     - indent element by integer spaces
-newfile  (boolean, False) - cause a new file to be started with the next element
-store    (string, None)   - store the element in an array named string
-retrieve (string, None)   - retrieve the elements stored in array named string
-begin    (list)           - control processing sequence of the begin event
-end      (list)           - control processing sequence of the end event
+:debug:    (boolean, False) - cause some output to be generated whenever this rule is matched
+:discard:  (boolean, False) - causes the current element to be discarded
+:replace:  (string, None)   - replace the current element with string
+:combine:  (boolean, False) - combine all similar sibling elements into a single comma-separated string
+:sanitize: (boolean, True)  - replaces non-ascii characters with ascii equivalents
+:collapse: (boolean, True)  - collapses sequences of whitespace and newlines into a single space
+:strip:    (boolean, False) - removes whitespace from both ends of element
+:format:   (string, None)   - format the element using string
+:prefix:   (string, None)   - prepend string to element
+:suffix:   (string, None)   - append string to element
+:indent:   (integer, 0)     - indent element by integer spaces
+:newfile:  (boolean, False) - cause a new file to be started with the next element
+:store:    (string, None)   - store the element in an array named string
+:retrieve: (string, None)   - retrieve the elements stored in array named string
+:begin:    (list)           - control processing sequence of the begin event
+:end:      (list)           - control processing sequence of the end event
 
 The order of these variables is irrelevant.  If you need to control the processing order, use 
-the "begin" and "end" variables to tune how an element is processed. For example:
+the "begin" and "end" variables to tune how an element is processed. For example::
 
-/foo/bar$:
-    begin = do.sanitize, do.collapse, do.prefix
-    end = do.sanitize, do.collapse, do.suffix
-    suffix = ">"
-    prefix = "<"
+    /foo/bar$:
+        begin = do.sanitize, do.collapse, do.prefix
+        end = do.sanitize, do.collapse, do.suffix
+        suffix = ">"
+        prefix = "<"
 
 "begin" corresponds to the opening tag of an element, "end" corresponds with the closing tag.
 
 Variables
 ---------
 Besides the directive-oriented variables, other information is provided:
-re    - the Python regular expression module
-event - the current event ("start" or "end")
-elem  - the current element
-match - the regular expression Match object
-regex - the current regular expression 
-xpath - the XPath of the current element
+:re:    - the Python regular expression module
+:event: - the current event ("start" or "end")
+:elem:  - the current element
+:match: - the regular expression Match object
+:regex: - the current regular expression 
+:xpath: - the XPath of the current element
 
 
 A more involved example
 -----------------------
 
-Given the following XML fragment:
+Given the following XML fragment::
 
-<list>
-  <listitem name="bar">
-    some text
     <list>
-      <listitem name="foo">
-        some more text
+      <listitem name="bar">
+        some text
+        <list>
+          <listitem name="foo">
+            some more text
+          </listitem>
+        </list>
       </listitem>
     </list>
-  </listitem>
-</list>
 
-this rule:
+this rule::
 
-/listitem$:
-    _depth = len (re.findall ('/list(/|$)', xpath))
-    prefix = "*" * _depth
-    format = " {tag}/{name}: {0}".format (tag=elem.tag, name=elem.get('name'))
+    /listitem$:
+        _depth = len (re.findall ('/list(/|$)', xpath))
+        prefix = "*" * _depth
+        format = " {tag}/{name}: {0}".format (tag=elem.tag, name=elem.get('name'))
     
-would output:
+would output::
 
     * listitem/bar: some text
     ** listitem/foo: some more text
