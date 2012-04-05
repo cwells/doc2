@@ -19,8 +19,11 @@ from cStringIO import StringIO
 from lxml import etree
 from optparse import OptionParser
 from ConfigParser import RawConfigParser
-from ordereddict import OrderedDict
-
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+    
 def is_iterable (o): return hasattr (o, '__contains__')
 
 class Transformer (object):

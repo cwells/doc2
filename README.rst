@@ -26,6 +26,15 @@ example::
 
   ./doc2.py -s ../src -p "*.xml"  -d ../output -f mediawiki -r "//directive" -a name
 
+============
+Dependencies
+============
+lxml_, OrderedDict_
+
+If you are using Python 2.7 or greater, OrderedDict is not required.
+
+.. _OrderedDict: http://pypi.python.org/pypi/ordereddict
+.. _lxml: http://pypi.python.org/pypi/lxml/2.3.4
 
 ============
 Config files
