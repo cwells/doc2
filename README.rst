@@ -27,9 +27,11 @@ example::
   ./doc2.py -s ../src -p "*.xml"  -d ../output -f mediawiki -r "//directive" -a name
 
 
-========
-Sections
-========
+============
+config files
+============
+A format is defined by a config file (extension ".cfg").  A config file has several sections, described below.
+
 
 [info] 
 ------
