@@ -1,7 +1,8 @@
 =====
 About
 =====
-doc2.py is a utility for converting XML documents into various text formats (wiki markups, reStructuredText, etc).
+doc2.py is a utility for converting XML documents into various text formats (wiki markups, reStructuredText, etc).  It was developed for, and
+tested against the Nginx XML documentations sources, so YMMV. Patches that provide generalization welcome.
 
 usage::
 
