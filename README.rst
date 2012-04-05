@@ -60,7 +60,7 @@ Other options may be included (author, version, etc), but will be ignored.
 Default values may be set here. If a variable isn't explicitly defined in a section,
 the value from here will be used (if present).  
 
-You may want to at least set defaults for "start" and "end" processing sequences, 
+You may want to at least set defaults for ``start`` and ``end`` processing sequences, 
 otherwise internal defaults are used that may cause surprises. Exclude any directives
 that won't be used.
 
@@ -132,7 +132,7 @@ Variables  (type, default)
 :end:      (list)           - control processing sequence of the end event
 
 The order of these variables is irrelevant.  If you need to control the processing order, use 
-the "begin" and "end" variables to tune how an element is processed. For example::
+the ``begin`` and ``end`` variables to tune how an element is processed. For example::
 
     /foo/bar$:
         begin = do.sanitize, do.collapse, do.prefix
@@ -140,7 +140,7 @@ the "begin" and "end" variables to tune how an element is processed. For example
         suffix = ">"
         prefix = "<"
 
-"begin" corresponds to the opening tag of an element, "end" corresponds with the closing tag.
+``begin`` corresponds to the opening tag of an element, ``end`` corresponds with the closing tag (these are known as "events").
 
 Variables
 ---------
