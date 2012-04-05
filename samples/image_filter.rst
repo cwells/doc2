@@ -19,7 +19,7 @@ image_filter
     None
  
 :Context: 
-     ``location`` 
+   ``location`` 
  
 
 Sets the type of transformation to perform on images:

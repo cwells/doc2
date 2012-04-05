@@ -9,7 +9,11 @@ image_filter_buffer
      ``1M`` 
  
 :Context: 
-     ``http, server, location`` 
+   ``http`` 
+ 
+   ``server`` 
+ 
+   ``location`` 
  
 
 Sets the maximum size of the buffer used for reading images. When a size is exceeded the server will return error ``415 (Unsupported Media Type)`` .   
