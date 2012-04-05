@@ -99,7 +99,7 @@ class Transformer (object):
         xpath = self._root.getpath (elem)
         match = None
         for _i, regex in enumerate (self._rules):
-            mo = self._compiled_rules [_i].search (xpath)
+            mo = self._compiled_rules [_i].search (xpath, re.M)
             if mo:
                 match = regex
                 break
