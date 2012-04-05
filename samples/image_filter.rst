@@ -15,9 +15,11 @@ image_filter
  
     **image_filter** ``crop`` *width* *height*
  
-Default: ````
+:Default:
+    ````
  
-Context: ``location``
+:Context: 
+    ``location``
  
 
 Sets the type of transformation to perform on images:
