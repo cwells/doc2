@@ -1,3 +1,34 @@
+=====
+About
+=====
+doc2.py is a utility for converting XML documents into various text formats (wiki markups, reStructuredText, etc).
+
+usage::
+
+  ./doc2.py --help
+  Usage: doc2.py [options]
+
+  Options:
+    -h, --help            show this help message and exit
+    -r ROOT, --root=ROOT  the root element, files will be split at every one of
+                          these
+    -a ATTR, --attribute=ATTR
+                          files will be named for this attribute of the ROOT
+                          element
+    -f FORMAT, --format=FORMAT
+                          output format [text|mediawiki]
+    -d DIR, --destination=DIR
+                          destination directory
+    -p PATTERN, --pattern=PATTERN
+                          convert files matching pattern
+    -v LEVEL, --verbosity=LEVEL
+                          set verbosity [crit|warn|info|debug|error]
+
+example::
+
+  ./doc2.py -f mediawiki -r "//directive" -a name
+
+
 ========
 Sections
 ========
