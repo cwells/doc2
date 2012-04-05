@@ -28,7 +28,7 @@ example::
 
 
 ============
-config files
+Config files
 ============
 A format is defined by a config file (extension ".cfg").  A config file has several sections, described below.
 
