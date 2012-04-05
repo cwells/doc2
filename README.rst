@@ -5,9 +5,12 @@ Section [info]
 ==============
 This section contains info about the config, as well as some defaults:
 
-:description: A general description of the config 
-:extension: the extension to use for generated files
-:directory: the directory to output generated files
+:description: 
+  A general description of the config 
+:extension:
+  the extension to use for generated files
+:directory:
+  the directory to output generated files
 
 Other options may be included (author, version, etc), but will be ignored.
 
