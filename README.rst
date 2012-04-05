@@ -1,5 +1,3 @@
-Format of config file.
-
 ==============
 Section [info] 
 ==============
@@ -79,9 +77,13 @@ A rule may set special variables that control the generated output:
 
 Variables  (type, default) 
 --------------------------
-:debug:    (boolean, False) - cause some output to be generated whenever this rule is matched
-:discard:  (boolean, False) - causes the current element to be discarded
-:replace:  (string, None)   - replace the current element with string
+:debug (boolean, False):
+    cause some output to be generated whenever this rule is matched
+:discard (boolean, False):
+    causes the current element to be discarded
+:replace (string, None):
+    replace the current element with string
+
 :combine:  (boolean, False) - combine all similar sibling elements into a single comma-separated string
 :sanitize: (boolean, True)  - replaces non-ascii characters with ascii equivalents
 :collapse: (boolean, True)  - collapses sequences of whitespace and newlines into a single space
