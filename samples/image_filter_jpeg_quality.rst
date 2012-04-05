@@ -1,4 +1,3 @@
-
 =======
 image_filter_jpeg_quality
 ========
