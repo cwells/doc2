@@ -3,7 +3,7 @@ image_filter_jpeg_quality
 ========================= 
 
 :Syntax: 
-    **image_filter_jpeg_quality**  *quality* 
+    **image_filter_jpeg_quality** *quality*
  
 :Default:
      ``75`` 
