@@ -146,6 +146,7 @@ the ``begin`` and ``end`` variables to tune how an element is processed. For exa
 Variables
 ---------
 Besides the directive-oriented variables, other information is provided:
+
 :re:    - the Python regular expression module
 :event: - the current event ("start" or "end")
 :elem:  - the current element
