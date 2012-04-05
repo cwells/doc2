@@ -24,7 +24,7 @@ usage::
 
 example::
 
-  ./doc2.py -f mediawiki -r "//directive" -a name
+  ./doc2.py -s ../src -p "*.xml"  -d ../output -f mediawiki -r "//directive" -a name
 
 
 ========
