@@ -155,8 +155,8 @@ Besides the directive-oriented variables, other information is provided:
 :xpath: the XPath of the current element
 
 
-A more involved example
------------------------
+An example
+----------
 
 Given the following XML fragment::
 
