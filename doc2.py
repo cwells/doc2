@@ -235,13 +235,14 @@ verbosity_levels = dict (debug=logging.DEBUG, info=logging.INFO, warn=logging.WA
 available_formats = [os.path.splitext (f)[0] for f in glob ("*.cfg")]
 
 parser = OptionParser ()
-parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name') 
+parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src') 
 parser.add_option ("-r", "--root", dest="root_element", help="the root element, files will be split at every one of these", metavar="ROOT")
 parser.add_option ("-a", "--attribute", dest="fname_attribute", help="files will be named for this attribute of the ROOT element", metavar="ATTR")
 parser.add_option ("-f", "--format", dest="format", help="output format [{0}]".format ('|'.join (available_formats)), metavar="FORMAT")
 parser.add_option ("-d", "--destination", dest="dest_dir", help="destination directory", metavar="DIR")
 parser.add_option ("-p", "--pattern", dest="pattern", help="convert files matching pattern", metavar="PATTERN")
 parser.add_option ("-v", "--verbosity", dest="verbosity", help="set verbosity [{0}]".format ('|'.join (verbosity_levels)), metavar="LEVEL")
+parser.add_option ("-s", "--source", dest="srcdir", help="source directory for XML files", metavar="SRC")
 (options, args) = parser.parse_args ()
 
 if options.format not in available_formats:
@@ -256,7 +257,6 @@ format_cfg = RawConfigParser (dict_type=OrderedDict)
 format_cfg.optionxform = str # prevent configparser from lowercasing our regexes
 format_cfg.read ('%s.cfg' % options.format)
 
-srcdir = os.path.join ("nginx_org/xml/en/docs/http")
 parser = etree.XMLParser (dtd_validation=True) 
 
 logger = logging.getLogger (__name__)
@@ -266,7 +266,7 @@ processor = Transformer (format_cfg)
 logger.info (processor.description ())
 
 # for each xml file
-for srcfile in glob (os.path.join (srcdir, options.pattern)):
+for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
     tree = etree.parse (srcfile, parser)
     # logger.info ("  processing: {0}".format (os.path.basename (srcfile)))
 
