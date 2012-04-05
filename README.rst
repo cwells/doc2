@@ -115,22 +115,22 @@ A rule may set special variables that control the generated output:
 
 Variables  (type, default) 
 --------------------------
-:debug:    (boolean, False) - cause some output to be generated whenever this rule is matched
-:discard:  (boolean, False) - causes the current element to be discarded
-:replace:  (string, None)   - replace the current element with string
-:combine:  (boolean, False) - combine all similar sibling elements into a single comma-separated string
-:sanitize: (boolean, True)  - replaces non-ascii characters with ascii equivalents
-:collapse: (boolean, True)  - collapses sequences of whitespace and newlines into a single space
-:strip:    (boolean, False) - removes whitespace from both ends of element
-:format:   (string, None)   - format the element using string
-:prefix:   (string, None)   - prepend string to element
-:suffix:   (string, None)   - append string to element
-:indent:   (integer, 0)     - indent element by integer spaces
-:newfile:  (boolean, False) - cause a new file to be started with the next element
-:store:    (string, None)   - store the element in an array named string
-:retrieve: (string, None)   - retrieve the elements stored in array named string
-:begin:    (list)           - control processing sequence of the begin event
-:end:      (list)           - control processing sequence of the end event
+:debug:    (boolean, False)  cause some output to be generated whenever this rule is matched
+:discard:  (boolean, False)  causes the current element to be discarded
+:replace:  (string, None)    replace the current element with string
+:combine:  (boolean, False)  combine all similar sibling elements into a single comma-separated string
+:sanitize: (boolean, True)   replaces non-ascii characters with ascii equivalents
+:collapse: (boolean, True)   collapses sequences of whitespace and newlines into a single space
+:strip:    (boolean, False)  removes whitespace from both ends of element
+:format:   (string, None)    format the element using string
+:prefix:   (string, None)    prepend string to element
+:suffix:   (string, None)    append string to element
+:indent:   (integer, 0)      indent element by integer spaces
+:newfile:  (boolean, False)  cause a new file to be started with the next element
+:store:    (string, None)    store the element in an array named string
+:retrieve: (string, None)    retrieve the elements stored in array named string
+:begin:    (list)            control processing sequence of the begin event
+:end:      (list)            control processing sequence of the end event
 
 The order of these variables is irrelevant.  If you need to control the processing order, use 
 the ``begin`` and ``end`` variables to tune how an element is processed. For example::
@@ -147,12 +147,12 @@ Variables
 ---------
 Besides the directive-oriented variables, other information is provided:
 
-:re:    - the Python regular expression module
-:event: - the current event ("start" or "end")
-:elem:  - the current element
-:match: - the regular expression Match object
-:regex: - the current regular expression 
-:xpath: - the XPath of the current element
+:re: the Python regular expression module
+:event: the current event ("start" or "end")
+:elem: the current element
+:match: the regular expression Match object
+:regex: the current regular expression 
+:xpath: the XPath of the current element
 
 
 A more involved example
