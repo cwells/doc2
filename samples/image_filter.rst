@@ -1,16 +1,24 @@
 ============
 image_filter
 ============ 
-Syntax: **image_filter** ``off`` 
-        **image_filter** ``test`` 
-        **image_filter** ``size`` 
-        **image_filter** ``rotate`` ``90`` | ``180`` | ``270`` 
-        **image_filter** ``resize`` *width* *height* 
-        **image_filter** ``crop`` *width* *height* 
-Default: ```` 
-Context: ``location`` 
+Syntax: **image_filter** ``off``
+ 
+**image_filter** ``test``
+ 
+**image_filter** ``size``
+ 
+**image_filter** ``rotate`` ``90`` | ``180`` | ``270``
+ 
+**image_filter** ``resize`` *width* *height*
+ 
+**image_filter** ``crop`` *width* *height*
+ 
+Default: ````
+ 
+Context: ``location``
+ 
 
- Sets the type of transformation to perform on images: 
+Sets the type of transformation to perform on images:
  
 ``off``   
    turns off module processing in a surrounding location.  
