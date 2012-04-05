@@ -1,6 +1,9 @@
-==============
-Section [info] 
-==============
+========
+Sections
+========
+
+[info] 
+------
 This section contains info about the config, as well as some defaults:
 
 :description: 
@@ -12,10 +15,8 @@ This section contains info about the config, as well as some defaults:
 
 Other options may be included (author, version, etc), but will be ignored.
 
-
-==================
-Section [defaults]
-==================
+[defaults]
+----------
 Default values may be set here. If a variable isn't explicitly defined in a section,
 the value from here will be used (if present).  
 
@@ -23,10 +24,8 @@ You may want to at least set defaults for "start" and "end" processing sequences
 otherwise internal defaults are used that may cause surprises. Exclude any directives
 that won't be used.
 
-
-=================
-Section [defines]
-=================
+[defines]
+---------
 This section allows you to define strings that can be substituted into the [rules] section.  These 
 are not really variables, rather they are interpolated into the block.  If you aren't careful, this 
 can lead to mistakes.  For example::
@@ -48,10 +47,8 @@ being evaluated, which probably isn't what you intended.
 
 Also note that the regex itself is unaffected by substitutions.
 
-
-===============
-Section [rules]
-===============
+[rules]
+-------
 This section is where you define regular expressions that will match particular XPaths, 
 followed by a set of processing directives. The processing directives are executed as
 Python code.
@@ -77,13 +74,9 @@ A rule may set special variables that control the generated output:
 
 Variables  (type, default) 
 --------------------------
-:debug (boolean, False):
-    cause some output to be generated whenever this rule is matched
-:discard (boolean, False):
-    causes the current element to be discarded
-:replace (string, None):
-    replace the current element with string
-
+:debug:    (boolean, False) - cause some output to be generated whenever this rule is matched
+:discard:  (boolean, False) - causes the current element to be discarded
+:replace:  (string, None)   - replace the current element with string
 :combine:  (boolean, False) - combine all similar sibling elements into a single comma-separated string
 :sanitize: (boolean, True)  - replaces non-ascii characters with ascii equivalents
 :collapse: (boolean, True)  - collapses sequences of whitespace and newlines into a single space
