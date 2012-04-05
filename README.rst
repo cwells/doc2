@@ -147,9 +147,9 @@ Variables
 ---------
 Besides the directive-oriented variables, other information is provided:
 
-:re: the Python regular expression module
+:re:    the Python regular expression module
 :event: the current event ("start" or "end")
-:elem: the current element
+:elem:  the current element
 :match: the regular expression Match object
 :regex: the current regular expression 
 :xpath: the XPath of the current element

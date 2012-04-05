@@ -145,7 +145,7 @@ class Transformer (object):
             try: # test our unicodiness
                 str (t) 
             except UnicodeEncodeError, e:
-                logger.error (u"{0}({1}):\n{3}".format (directive, elem.tag, e))
+                logger.error (u"{0}({1}):\n{2}".format (directive, elem.tag, e))
                     
         return t
 
