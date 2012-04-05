@@ -1,7 +1,9 @@
 =========================
 image_filter_jpeg_quality
 ========================= 
-Syntax: **image_filter_jpeg_quality** *quality*
+
+:Syntax: 
+    **image_filter_jpeg_quality** *quality*
  
 Default: ``75``
  

@@ -1,17 +1,19 @@
 ============
 image_filter
 ============ 
-Syntax: **image_filter** ``off``
+
+:Syntax: 
+    **image_filter** ``off``
  
-**image_filter** ``test``
+    **image_filter** ``test``
  
-**image_filter** ``size``
+    **image_filter** ``size``
  
-**image_filter** ``rotate`` ``90`` | ``180`` | ``270``
+    **image_filter** ``rotate`` ``90`` | ``180`` | ``270``
  
-**image_filter** ``resize`` *width* *height*
+    **image_filter** ``resize`` *width* *height*
  
-**image_filter** ``crop`` *width* *height*
+    **image_filter** ``crop`` *width* *height*
  
 Default: ````
  

@@ -1,7 +1,9 @@
 ===================
 image_filter_buffer
 =================== 
-Syntax: **image_filter_buffer** *size*
+
+:Syntax: 
+    **image_filter_buffer** *size*
  
 Default: ``1M``
  
