@@ -1,7 +1,7 @@
 =====
 About
 =====
-doc2.py is a utility for converting XML documents into various text formats (wiki markups, reStructuredText, etc).  It was developed for, and
+doc2.py is a utility for converting XML documents into various text formats (MediaWiki markup, reStructuredText, etc).  It was developed for, and
 tested exclusively against, the Nginx XML documentations sources, so YMMV. Patches that provide generalization welcome.
 
 usage::
@@ -15,7 +15,7 @@ usage::
                           destination directory
     -p PATTERN, --pattern=PATTERN
                           convert files matching pattern
-    -r ROOT, --root=ROOT  the root element, files will be split at every one of these
+    -r ROOT, --root=ROOT  the root element(s). Only elements below these will be processed.
     -a ATTR, --attribute=ATTR
                           files will be named for this attribute of the ROOT element
     -f FORMAT, --format=FORMAT
@@ -36,6 +36,18 @@ If you are using Python 2.7 or greater, OrderedDict is not required.
 
 .. _OrderedDict: http://pypi.python.org/pypi/ordereddict
 .. _lxml: http://pypi.python.org/pypi/lxml/2.3.4
+
+============
+How it works
+============
+doc2.py uses lxml to parse the XML source files. As lxml traverses the XML tree, it generates a pair of events for each tag: ``start`` and ``end``.
+Every time lxml generates one of these events, doc2.py takes the current element, finds its XPath, and then searches the config file for a regular
+expression matching that XPath.  When a regex is found, doc2.py evaluates the block of code associated with that regular expression and outputs the 
+results into a file.
+
+A secondary feature of doc2.py is splitting up the source into smaller files. This feature was needed specifically for the Nginx documentation, but may
+be useful in general. When doc2.py processes the XML file, whenever it encounters the config setting ``newfile = True``, it starts a new file, using 
+the attribute of the current element specified with the ``-a`` command-line option to calculate the filename.
 
 ============
 Config files
