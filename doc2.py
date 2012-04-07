@@ -40,6 +40,7 @@ class Transformer (object):
         self._newfile = False        # flag that a new file should be generated
         self._plan = OrderedDict ()  # used for debugging output
         self._store = {}
+        self.last_output = ''
 
         self._defaults = self.parse_defaults (config)
         self._rules = self.parse_rules (config)
@@ -118,8 +119,10 @@ class Transformer (object):
 
         vars = {
             're': re,
+            'string': string,
             'event': event, 
-            'elem': elem, 
+            'elem': elem,
+            'last_output': self.last_output,
             'match': mo,
             'regex': match,
             'xpath': xpath,
@@ -146,7 +149,8 @@ class Transformer (object):
                 str (t) 
             except UnicodeEncodeError, e:
                 logger.error (u"{0}({1}):\n{2}".format (directive, elem.tag, e))
-                    
+                   
+        self.last_output = t 
         return t
 
     #
