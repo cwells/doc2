@@ -3,7 +3,7 @@ image_filter_transparency
 ========================= 
 
 :Syntax: 
-    **image_filter_transparency** ``on``|``off``
+    **image_filter_transparency** ``on`` | ``off``
  
 :Default:
     ``on``
