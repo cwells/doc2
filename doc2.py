@@ -135,7 +135,10 @@ class Transformer (object):
 
         if match:
             exec (self._defaults, {}, vars)
-            exec (self._rules.get (match, ''), {}, vars)
+            try:
+                exec (self._rules.get (match, ''), {}, vars)
+            except Exception, e:
+                logging.error ("Error in rule {0}: {1}".format (match, e))
 
         try:
             self._plan [match][xpath] = vars ['debug']
