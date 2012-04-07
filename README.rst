@@ -160,8 +160,10 @@ Variables
 Besides the directive-oriented variables, other information is provided:
 
 :re:    the Python regular expression module
+:string: the Python string module
 :event: the current event ("start" or "end")
 :elem:  the current element
+:last_output: the last text that was output
 :match: the regular expression Match object
 :regex: the current regular expression 
 :xpath: the XPath of the current element
