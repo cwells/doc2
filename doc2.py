@@ -50,7 +50,7 @@ class Transformer (object):
             try:
                 self._compiled_rules.append (re.compile (r))
             except Exception, e:
-                print e, r
+                logger.error ("{0} {1}".format (r, e))
 
     def __del__ (self):
         logger = logging.getLogger (__name__)
@@ -73,7 +73,11 @@ class Transformer (object):
         rules = OrderedDict ()
         for regex, settings in cfg.items ('rules'):
             t = string.Template (settings).substitute (rules_defines)
-            rules [regex] = compile (t, repr (type (t)), 'exec')
+            try:
+                rules [regex] = compile (t, regex, 'exec')
+            except Exception, e:
+                logger.error ('Malformed rule: {0}'.format (e))
+
         return rules
 
     def description (self):

@@ -46,7 +46,7 @@ In case of an error, the following is output:
 ``rotate`` ``90`` | ``180`` | ``270``    
    rotates images counter-clockwise by the specified number of degrees. Value of the parameter can contain variables. Can be used either alone, or along with the ``resize`` and ``crop`` transformations.  
 ``resize`` ``width`` ``height``    
-   proportionally reduces an image to the specified sizes. To reduce by only one dimension, another dimension can be specified as "``-``". In case of an error, the server will return code ``415 (Unsupported Media Type)``. Values of parameters can contain variables. When used along with the ``rotate`` parameter, the rotation happens **after** reduction.  
+   proportionally reduces an image to the specified sizes. To reduce by only one dimension, another dimension can be specified as " ``-``". In case of an error, the server will return code ``415 (Unsupported Media Type)``. Values of parameters can contain variables. When used along with the ``rotate`` parameter, the rotation happens **after** reduction.  
 ``crop`` ``width`` ``height``    
-   proportionally reduces an image to the size of the largest side and crops extraneous edges by another side. To reduce by only one dimension, another dimension can be specified as "``-``". In case of an error, the server will return code ``415 (Unsupported Media Type)``. Values of parameters can contain variables. When used along with the ``rotate`` parameter, the rotation happens **before** reduction.  
+   proportionally reduces an image to the size of the largest side and crops extraneous edges by another side. To reduce by only one dimension, another dimension can be specified as " ``-``". In case of an error, the server will return code ``415 (Unsupported Media Type)``. Values of parameters can contain variables. When used along with the ``rotate`` parameter, the rotation happens **before** reduction.  
    
