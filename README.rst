@@ -121,6 +121,10 @@ For example::
     ^/foo/bar.*/baz$:
         debug = True
 
+:Caveats:
+    Due to the way the config file is parsed, indentation is **not** preserved, so statements are 
+    limited to a single line.
+
 Processing
 ----------
 A rule may set special variables that control the generated output:
