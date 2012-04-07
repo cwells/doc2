@@ -109,7 +109,7 @@ Python code.
 Rules are processed, in order, from top to bottom. The first matching rule is used. This
 means you should put more specific rules above more general ones.
 
-Once a rule is located, the rule's block is evaluated as Python code. 
+Once a rule is located, the rule's block is evaluated as Python code (see Caveats below). 
 
 A rule consists of the following::
 
@@ -121,8 +121,7 @@ For example::
     ^/foo/bar.*/baz$:
         debug = True
 
-:Caveats:
-    Due to the way the config file is parsed, indentation is **not** preserved, so statements are 
+**Caveats**: Due to the way the config file is parsed, indentation is **not** preserved, so statements are 
     limited to a single line.
 
 Processing
