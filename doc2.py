@@ -28,7 +28,7 @@ def is_iterable (o): return hasattr (o, '__contains__')
 
 class Transformer (object):
     directives = { # processed in order for each event
-        'start': [ 'discard', 'replace', 'combine', 'sanitize', 'collapse', 'strip', 'format', 'prefix', 'indent', 'store' ],
+        'start': [ 'discard', 'replace', 'combine', 'sanitize', 'collapse', 'strip', 'lstrip', 'rstrip', 'format', 'prefix', 'indent', 'store' ],
         'end':   [ 'discard', 'sanitize', 'collapse', 'suffix', 'retrieve', 'newfile' ]
     }
 
@@ -191,6 +191,16 @@ class Transformer (object):
     def strip (self, t, strip=False, **_):
         if strip:
             return t.strip ()
+        return t
+
+    def lstrip (self, t, lstrip=False, **_):
+        if lstrip:
+            return t.lstrip ()
+        return t
+
+    def rstrip (self, t, rstrip=False, **_):
+        if rstrip:
+            return t.rstrip ()
         return t
 
     def format (self, t, format = None, **_):
