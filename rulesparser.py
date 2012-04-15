@@ -1,3 +1,11 @@
+# --------------------------------------------------------------------------
+# rulesparser.py
+#
+# A module for parsing the rules files used by doc2.py
+#
+# (c) Cliff Wells, 2012  <cliff@nginx.com>
+# --------------------------------------------------------------------------
+
 from pyparsing import (
     Literal, Word, White, ZeroOrMore, OneOrMore,
     Group, Dict, Optional, printables, ParseException, restOfLine

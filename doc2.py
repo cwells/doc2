@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # --------------------------------------------------------------------------
-# doc2any.py
+# doc2.py
 # A utility to convert Nginx XML documentation source into various formats.
 # It also breaks up those documents into smaller fragments that can be 
 # referenced by module/name.
