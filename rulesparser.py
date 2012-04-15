@@ -159,16 +159,16 @@ class RulesParser (object):
 # do a quick test
 ###
 if __name__ == '__main__':
-    cfg = '''
+    cfg = r'''
     [info]
     description = test rules
     extension = .txt
 
     [defines]
-    cr = "\\n"
+    cr = "\n"
 
     [defaults]
-    ~ .*
+    ~ ^
         start: 
             sanitize = True
             collapse = True
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     ~ /context(\[1\])?$
         start:
             combine = "context"
-            prefix = "\\n<tr><td>Context:</td>"
+            prefix = "{cr}<tr><td>Context:</td>".format (cr=$cr)
             format = "<td><pre>{0}</pre></td></tr></table>"
         end:
             sanitize = True
@@ -206,6 +206,7 @@ if __name__ == '__main__':
             for k, v in config.settings (r, e).items ():
                 print "\t\t", k, v
 
+    print "Searching"
     print config.search ("/module/section[3]/directive[1]")
 
 
