@@ -21,7 +21,7 @@ image_filter
   ``location``
  
 
- Sets the type of transformation to perform on images: 
+Sets the type of transformation to perform on images: 
  
 ``off``   
    turns off module processing in a surrounding location.  

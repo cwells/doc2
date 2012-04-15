@@ -15,4 +15,4 @@ image_filter_sharpen
   ``location``
  
 
- Increases sharpness of the final image. The sharpness percentage can exceed 100. The value of 0 disables sharpening. Value of the parameter can contain variables.   
+Increases sharpness of the final image. The sharpness percentage can exceed 100. The value of 0 disables sharpening. Value of the parameter can contain variables.   
