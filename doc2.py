@@ -34,6 +34,7 @@ class Transformer (object):
         self._newfile = False        # flag that a new file should be generated
         self._store = {}
         self.last_output = ''
+        self.directives = [f [len ('dd_'):] for f in dir (self) if f.startswith ('dd_')]
 
     def description (self):
         return self._cfg.get ('info')['description']
@@ -88,10 +89,10 @@ class Transformer (object):
             print 
             sys.exit (1)
 
-        for k in self._cfg.settings (match, event):
+        for directive in self._cfg.settings (match, event):
             if t is None: return
-            method = getattr (self, k, None)
-            if method:
+            if directive in self.directives:
+                method = getattr (self, "dd_{0}".format (directive), None)
                 t = method (t, **vars)
         
         if t is not None:
@@ -101,17 +102,17 @@ class Transformer (object):
     #
     # directive definitions
     #
-    def discard (self, t, discard=False, **_):
+    def dd_discard (self, t, discard=False, **_):
         if discard:
             return None
         return t
 
-    def replace (self, t, replace=None, **_):
+    def dd_replace (self, t, replace=None, **_):
         if replace:
             t = replace
         return t
 
-    def sanitize (self, t, sanitize=True, **_):
+    def dd_sanitize (self, t, sanitize=True, **_):
         if sanitize:
             t = re.sub (ur'\xa0', ' ', t)
             t = re.sub (ur'[\u201c\u201d]', '"', t)
@@ -119,59 +120,59 @@ class Transformer (object):
             t = re.sub (ur'[\u2014\u2018]', '-', t)  
         return t
 
-    def collapse (self, t, collapse=True, **_):
+    def dd_collapse (self, t, collapse=True, **_):
         ''' collapse sequences of spaces and newlines, replace non-ascii quotes
         '''
         if collapse:
             t = re.sub (ur'\s+', ' ', t)       
         return t
 
-    def strip (self, t, strip=False, **_):
+    def dd_strip (self, t, strip=False, **_):
         if strip:
             return t.strip ()
         return t
 
-    def lstrip (self, t, lstrip=False, **_):
+    def dd_lstrip (self, t, lstrip=False, **_):
         if lstrip:
             return t.lstrip ()
         return t
 
-    def strip (self, t, rstrip=False, **_):
+    def dd_strip (self, t, rstrip=False, **_):
         if rstrip:
             return t.rstrip ()
         return t
 
-    def format (self, t, format = None, **_):
+    def dd_format (self, t, format = None, **_):
         '''format using Python string.format
         '''
         if format:
             return format.format (t)
         return t
 
-    def indent (self, t, indent=4, **_):
+    def dd_indent (self, t, indent=4, **_):
         ''' indent a region
         '''
         lines = t.split ('\n')
         return '\n'.join ([(" " * indent + l) for l in lines])
 
-    def prefix (self, t, prefix='', **_):
+    def dd_prefix (self, t, prefix='', **_):
         ''' prepend a string
         '''
         return prefix + t
 
-    def suffix (self, t, suffix='', **_):
+    def dd_suffix (self, t, suffix='', **_):
         ''' append a string
         '''
         return suffix + t
 
-    def combine (self, t, elem=None, event=None, combine=None, **_):
+    def dd_combine (self, t, elem=None, event=None, combine=None, **_):
         ''' combine all identical siblings in a single, comma-separated string
         '''
         if combine:
             t = ', '.join ([c.text for c in elem.getparent().findall (combine)])
         return t
 
-    def store (self, t, store=None, **_):
+    def dd_store (self, t, store=None, **_):
         if store:
             # print "store", _['re_match'].group (0)
             self._store.setdefault (store, [])
@@ -179,7 +180,7 @@ class Transformer (object):
             return None
         return t
 
-    def retrieve (self, t, retrieve=None, **_):
+    def dd_retrieve (self, t, retrieve=None, **_):
         if retrieve:
             # print "retrieve", _['re_match'].group (0)
             self._store [retrieve].append (t)
@@ -187,7 +188,7 @@ class Transformer (object):
             del self._store [retrieve]
         return t
 
-    def newfile (self, t, newfile=False, **_):
+    def dd_newfile (self, t, newfile=False, **_):
         self._newfile = newfile
         return t
 
