@@ -197,7 +197,7 @@ if __name__ == '__main__':
     '''
 
     config = RulesParser ()
-    c = config.parse (file ('rst.rules'))
+    c = config.parse (cfg)
 
     for r in config.rules ():
         print r
