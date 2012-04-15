@@ -98,7 +98,7 @@ italblock = "*{0}*"
 
 ~ /syntax(\[1\])?$
     start:
-        sanitize = True
+        sanitize = True 
         collapse = True
         strip = True
         _name = elem.xpath ('ancestor::directive')[0].get ('name')
@@ -205,9 +205,9 @@ italblock = "*{0}*"
     start:
         sanitize = True
         collapse = True
-        strip = True
+        lstrip = True
         prefix = $para
-
+        
 ~ /c-def(\[\d+\])?$
     start:
         sanitize = True
