@@ -1,0 +1,276 @@
+##
+# info
+##
+[info]
+description = reStructuredText formatting rules for Nginx docs
+author = Cliff Wells <cliff@nginx.com>
+version = 1.0
+license = BSD
+extension = rst
+directory = rst
+
+##
+# defines
+##
+[defines]
+pad = (lambda s, c=' ': c * len (s))
+nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
+tabwidth = 4
+cr = "\n"
+para = "\n\n"
+
+bold = "**"
+ital = "*"
+list_bullet = "-"
+
+codeblock = "\n\n::\n{0}\n\n"
+preblock = "``{0}``"
+boldblock = "**{0}**"
+italblock = "*{0}*"
+
+##
+# default rule
+# A regex is required by syntax but ignored. Only first regex block is used.
+##
+[defaults]
+~ ^
+    start:
+        sanitize = True
+        collapse = True
+    end:
+        sanitize = True
+        collapse = True
+
+##
+# rules
+##
+[rules]
+
+# discard everthing not under /module/section/directive
+~ ^/module(?!/section(\[\d+\])?/directive)
+    start:
+        discard = True
+
+~ /directive(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        _name = elem.get ('name')
+        prefix = "{pad}{cr}{0}{cr}{pad}".format (_name, pad=$pad (_name, '='), cr=$cr)
+    end:
+        sanitize = True
+        collapse = True        
+        newfile = True
+
+~ /context(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+        prefix = "{cr}:Context: {cr}  ".format (cr=$cr)
+    end:
+        sanitize = True
+        collapse = True
+        suffix = $cr
+
+~ /context(\[\d+\])
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+        prefix = "{cr}  ".format (cr=$cr)
+    end:
+        sanitize = True
+        collapse = True
+        suffix = $cr
+
+~ /default(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        format = $preblock if elem.text else "None"
+        prefix = "{cr}:Default:{cr}    ".format (cr=$cr)
+    end:    
+        sanitize = True
+        collapse = True
+        suffix = $cr
+
+~ /syntax(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _name = elem.xpath ('ancestor::directive')[0].get ('name')
+        prefix = "{cr}:Syntax: {cr}    {bold}{0}{bold} ".format (_name, cr=$cr, bold=$bold)        
+    end:
+        sanitize = True
+        collapse = True
+        suffix = $cr
+
+~ /syntax(\[\d+\])?$
+    start:  
+        sanitize = True
+        collapse = True
+        _name = elem.xpath ('ancestor::directive')[0].get ('name')
+        prefix = "{cr}    {bold}{0}{bold} ".format (_name, cr=$cr, bold=$bold)
+    end:
+        sanitize = True
+        collapse = True
+        suffix = $cr        
+
+~ /syntax(\[\d+\])?/value(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $italblock
+        prefix = "" if last_output [-1:] in string.whitespace else " "
+    end:
+        sanitize = True
+        collapse = True
+        _next = getattr (elem, 'tail', None)
+        suffix = " " if _next is not None and _next [-1:] == '|' else ""
+        
+~ /syntax(\[\d+\])?/literal(\[\d+\])?$:
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+        prefix = "" if last_output [-1:] in string.whitespace else " "
+    end:
+        sanitize = True
+        collapse = True
+        _next = getattr (elem, 'tail', None)
+        suffix = " " if _next is not None and _next [-1:] == '|' else ""
+
+~ /example(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        format = $codeblock
+        indent = $tabwidth
+
+~ /list(\[\d+\])?/tag-name(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        replace = $cr
+
+~ /list(\[\d+\])?/tag-name(\[\d+\])?/literal(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = "``{0}``"
+        _prev = elem.getprevious ()
+        prefix = " " if _prev is not None and _prev.tail.endswith ('|') else ""
+    end:
+        sanitize = True
+        collapse = True
+        suffix = " " if elem.tail and elem.tail.startswith ('|') else ""
+        
+~ /list(\[\d+\])?/tag-name(\[\d+\])?/(value(\[\d+\])?)+$
+    start:
+        sanitize = True
+        collapse = True
+        format = "``{0}``"
+
+~ /(?P<list>list)(\[\d+\])?/tag-desc(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        prefix = $cr
+        indent = 2
+
+~ /listitem(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        prefix = '{cr}{0}'.format ($nestedlist ('*'), cr=$cr)
+        indent = 4
+
+~ /list(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        prefix = $cr
+    end:
+        sanitize = True
+        collapse = True
+        suffix = $cr
+
+~ /note(\[\d+\])?$
+
+~ /para(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        prefix = $para
+
+~ /c-def(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = "``{0}``"
+
+~ /c-func(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = "''{0}()''"
+
+~ /link(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = "[{0}|{0}]"
+
+~ /command(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+
+~ /emphasis(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $boldblock
+
+~ /header(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+
+~ /http-status(\[\d+\])?$
+    start:    
+        http_code = elem.get ('code').strip ()
+        http_text = elem.get ('text').strip ()
+        replace = "{0} ({1})".format (http_code, http_text)
+        format = $preblock
+        prefix = "" if last_output [-1:] in string.whitespace else " "
+
+~ /(literal|path|value|var)(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = $preblock
+        prefix = "" if last_output [-1:] in string.whitespace + '"' + "'" else " "
+
+~ /appeared-in(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        prefix = "{cr}Compatiblity: ".format (cr=$cr)
+
+~ /comment\(\)(\[\d+\])?$
+    start:
+        discard = True
+
+# default processing on anything else
+~ .*
+    start:
+        debug = True
+

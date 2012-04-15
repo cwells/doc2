@@ -30,12 +30,13 @@ example::
 ============
 Dependencies
 ============
-lxml_, OrderedDict_
+pyparsing_, lxml_, OrderedDict_
 
 If you are using Python 2.7 or greater, OrderedDict is not required.
 
 .. _OrderedDict: http://pypi.python.org/pypi/ordereddict
 .. _lxml: http://pypi.python.org/pypi/lxml/2.3.4
+.. _pyparsing: http://pypi.python.org/pypi/pyparsing/
 
 ============
 How it works
@@ -52,7 +53,7 @@ the attribute of the current element specified with the ``-a`` command-line opti
 ============
 Config files
 ============
-A format is defined by a config file (extension ".cfg").  A config file has several sections, described below.
+A format is defined by a rules file (extension ".rules").  A rules file has several sections, described below.
 
 
 [info] 
@@ -70,12 +71,7 @@ Other options may be included (author, version, etc), but will be ignored.
 
 [defaults]
 ----------
-Default values may be set here. If a variable isn't explicitly defined in a section,
-the value from here will be used (if present).  
-
-You may want to at least set defaults for ``start`` and ``end`` processing sequences, 
-otherwise internal defaults are used that may cause surprises. Exclude any directives
-that won't be used.
+A single rule that defines event handlers for any rules that don't provide an event handler.
 
 [defines]
 ---------
@@ -87,14 +83,16 @@ can lead to mistakes.  For example::
     newline = "\n"
 
     [rules]
-    ^/foo/bar$:
-        prefix = "$newline"
+    ~ ^/foo/bar$
+        start:
+            prefix = "$newline"
 
 would result in::
 
     [rules]
-    ^/foo/bar$:
-        prefix = ""\n""
+    ~ ^/foo/bar$
+        start:
+            prefix = ""\n""
 
 being evaluated, which probably isn't what you intended.
 
@@ -113,13 +111,15 @@ Once a rule is located, the rule's block is evaluated as Python code (see Caveat
 
 A rule consists of the following::
 
-    [regular expression]:
-        [directives | nothing]
+    ~ [regular expression]
+        [start|end]:
+            [directives]
 
 For example::
 
-    ^/foo/bar.*/baz$:
-        debug = True
+    ~ ^/foo/bar.*/baz$
+        start:
+            discard = True
 
 **Caveats**: 
 Due to the way the config file is parsed, indentation is **not** preserved, so statements are limited to a single line.
@@ -147,14 +147,22 @@ Variables  (type, default)
 :begin:    (list)            control processing sequence of the begin event
 :end:      (list)            control processing sequence of the end event
 
-The order of these variables is irrelevant.  If you need to control the processing order, use 
-the ``begin`` and ``end`` variables to tune how an element is processed. For example::
+The order of these variables determines not only which directives are called, but also the order the directives are processed in. 
+For example::
 
-    /foo/bar$:
-        begin = do.sanitize, do.collapse, do.prefix
-        end = do.sanitize, do.collapse, do.suffix
-        suffix = ">"
-        prefix = "<"
+    ~ /foo/bar$
+        begin:
+            sanitize = True
+            collapse = True
+            prefix = "<"
+        end:
+            sanitize = True
+            collapse = True
+            suffix = ">"
+
+When the ``begin`` event is handled, the result is equivalent to the following::
+    
+    prefix (collapse (sanitize (text)), "<")
 
 ``begin`` corresponds to the opening tag of an element, ``end`` corresponds with the closing tag (these are known as "events").
 
@@ -190,10 +198,13 @@ Given the following XML fragment::
 
 this rule::
 
-    /listitem$:
-        _depth = len (re.findall ('/list(/|$)', xpath))
-        prefix = "*" * _depth
-        format = " {tag}/{name}: {0}".format (tag=elem.tag, name=elem.get('name'))
+    ~ /listitem$
+        start:
+            sanitize = True
+            collapse = True
+            _depth = len (re.findall ('/list(/|$)', xpath))
+            prefix = "*" * _depth
+            format = " {tag}/{name}: {0}".format (tag=elem.tag, name=elem.get('name'))
     
 would output::
 

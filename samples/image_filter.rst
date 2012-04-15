@@ -1,7 +1,6 @@
 ============
 image_filter
 ============ 
-
 :Syntax: 
     **image_filter** ``off``
  
@@ -9,11 +8,11 @@ image_filter
  
     **image_filter** ``size``
  
-    **image_filter** ``rotate`` ``90`` | ``180`` | ``270``
+    **image_filter**  ``rotate`` ``90`` | ``180`` | ``270``
  
-    **image_filter** ``resize`` *width* *height*
+    **image_filter**  ``resize`` ``width`` ``height``
  
-    **image_filter** ``crop`` *width* *height*
+    **image_filter**  ``crop`` ``width`` ``height``
  
 :Default:
     None
@@ -22,7 +21,7 @@ image_filter
   ``location``
  
 
-Sets the type of transformation to perform on images:
+ Sets the type of transformation to perform on images: 
  
 ``off``   
    turns off module processing in a surrounding location.  
@@ -32,17 +31,14 @@ Sets the type of transformation to perform on images:
    outputs information about images in a JSON format, e.g.:     
     
     ::
-    { "img" : { "width": 100, "height": 100, "type": "gif" } }
+     { "img" : { "width": 100, "height": 100, "type": "gif" } } 
     
-    
-In case of an error, the following is output:
-    
+     In case of an error, the following is output:     
     
     ::
-    {}
+     {} 
     
-    
- 
+      
 ``rotate`` ``90`` | ``180`` | ``270``    
    rotates images counter-clockwise by the specified number of degrees. Value of the parameter can contain variables. Can be used either alone, or along with the ``resize`` and ``crop`` transformations.  
 ``resize`` ``width`` ``height``    

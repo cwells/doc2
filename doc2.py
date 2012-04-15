@@ -11,14 +11,15 @@
 # --------------------------------------------------------------------------
 
 
-import os, sys, errno
+import os, sys, errno, traceback
 import logging; logging.basicConfig ()
 import re, string
 from glob import glob
 from cStringIO import StringIO
 from lxml import etree
 from optparse import OptionParser
-from ConfigParser import RawConfigParser
+# from ConfigParser import RawConfigParser
+from rulesparser import RulesParser
 try:
     from collections import OrderedDict
 except ImportError:
@@ -27,67 +28,21 @@ except ImportError:
 def is_iterable (o): return hasattr (o, '__contains__')
 
 class Transformer (object):
-    directives = { # processed in order for each event
-        'start': [ 'discard', 'replace', 'combine', 'sanitize', 'collapse', 'strip', 'lstrip', 'rstrip', 'format', 'prefix', 'indent', 'store' ],
-        'end':   [ 'discard', 'sanitize', 'collapse', 'suffix', 'retrieve', 'newfile' ]
-    }
-
-    # _defaults = { 'collapse': True, 'sanitize': True }
-
     def __init__ (self, config):
         self._cfg = config
         self._root = None            # root element to start processing at
         self._newfile = False        # flag that a new file should be generated
-        self._plan = OrderedDict ()  # used for debugging output
         self._store = {}
         self.last_output = ''
 
-        self._defaults = self.parse_defaults (config)
-        self._rules = self.parse_rules (config)
-        self._compiled_rules = []
-        for r in self._rules:
-            self._plan [r] = {}
-            try:
-                self._compiled_rules.append (re.compile (r))
-            except Exception, e:
-                logger.error ("{0} {1}".format (r, e))
-
-    def __del__ (self):
-        logger = logging.getLogger (__name__)
-        for regex in self._plan:
-            if not self._plan [regex]: continue
-            logger.debug (" {0}".format (regex))
-            for m, debug in sorted (self._plan [regex].items ()):
-                if not debug: continue
-                logger.debug ("       {0}".format (m))
-
-    def parse_defaults (self, cfg):
-        rules_defines = dict (cfg.items ('defines'))
-        rules = OrderedDict ()
-        code = '\n'.join (["{0}={1}".format (var, val) for var, val in cfg.items ('defaults')])
-        t = string.Template (code).substitute (rules_defines)
-        return compile (t, repr (type (t)), 'exec')
-
-    def parse_rules (self, cfg):
-        rules_defines = dict (cfg.items ('defines'))
-        rules = OrderedDict ()
-        for regex, settings in cfg.items ('rules'):
-            t = string.Template (settings).substitute (rules_defines)
-            try:
-                rules [regex] = compile (t, regex, 'exec')
-            except Exception, e:
-                logger.error ('Malformed rule: {0}'.format (e))
-
-        return rules
-
     def description (self):
-        return self._cfg.get ('info', 'description')
+        return self._cfg.get ('info')['description']
 
     def extension (self):
-        return self._cfg.get ('info', 'extension')
+        return self._cfg.get ('info')['extension']
 
     def directory (self):
-        return self._cfg.get ('info', 'directory')
+        return self._cfg.get ('info')['directory']
 
     def set_srcfile (self, srcfile):
         self._srcfile = srcfile
@@ -102,24 +57,14 @@ class Transformer (object):
         # Rules are processed in order, top down.
         # The first matching rule is selected.
         xpath = self._root.getpath (elem)
-        match = None
-        for _i, regex in enumerate (self._rules):
-            mo = self._compiled_rules [_i].search (xpath, re.M)
-            if mo:
-                match = regex
-                break
-
+        match, mo = self._cfg.search (xpath)
+        
         t = elem.text if event == 'start' else elem.tail
         if t is None: t = ''
             
         if match is None:
             logger.warn ('No rule matching {0}'.format (xpath))
             match = 'NO RULE'
-
-        class Proxy (object): pass
-        proxy = Proxy ()
-        for f in set (list.__add__ (*self.directives.values ())):
-            setattr (proxy, f, getattr (self, f))
 
         vars = {
             're': re,
@@ -129,35 +74,28 @@ class Transformer (object):
             'last_output': self.last_output,
             'match': mo,
             'regex': match,
-            'xpath': xpath,
-            'do': proxy
+            'xpath': xpath
         }
-
-        if match:
-            exec (self._defaults, {}, vars)
-            try:
-                exec (self._rules.get (match, ''), {}, vars)
-            except Exception, e:
-                logging.error ("Error in rule {0}: {1}".format (match, e))
-
+ 
         try:
-            self._plan [match][xpath] = vars ['debug']
-        except KeyError:
-            pass
+            exec (self._cfg.obj (match, event), {}, vars)
+        except:
+            exc_type, exc_value, exc_traceback = sys.exc_info ()
+            tb = traceback.extract_tb (exc_traceback)
+            tb_rule, tb_lineno, _, _ = tb [1]
+            print "\nError: {3}\nRule: {0}\nEvent: {1}\nLine {2}:\n".format (match, event, tb_lineno, exc_value)
+            print self.indent (self._cfg.src (match, event), indent=4)
+            print 
+            sys.exit (1)
 
-        processing_sequence = vars.get (event, [getattr (self, f) for f in self.directives [event] if f in vars])
-        if not is_iterable (processing_sequence): processing_sequence = [processing_sequence]
-        processing_sequence = [f for f in processing_sequence if f.__name__ in vars]
-        
-        for directive in processing_sequence:
+        for k in self._cfg.settings (match, event):
             if t is None: return
-            t = directive (t, **vars)
-            try: # test our unicodiness
-                str (t) 
-            except UnicodeEncodeError, e:
-                logger.error (u"{0}({1}):\n{2}".format (directive, elem.tag, e))
-                   
-        self.last_output = t 
+            method = getattr (self, k, None)
+            if method:
+                t = method (t, **vars)
+        
+        if t is not None:
+            self.last_output = t
         return t
 
     #
@@ -198,7 +136,7 @@ class Transformer (object):
             return t.lstrip ()
         return t
 
-    def rstrip (self, t, rstrip=False, **_):
+    def strip (self, t, rstrip=False, **_):
         if rstrip:
             return t.rstrip ()
         return t
@@ -206,7 +144,9 @@ class Transformer (object):
     def format (self, t, format = None, **_):
         '''format using Python string.format
         '''
-        return format.format (t)
+        if format:
+            return format.format (t)
+        return t
 
     def indent (self, t, indent=4, **_):
         ''' indent a region
@@ -225,7 +165,7 @@ class Transformer (object):
         return suffix + t
 
     def combine (self, t, elem=None, event=None, combine=None, **_):
-        ''' combine all identical siblings in a single string
+        ''' combine all identical siblings in a single, comma-separated string
         '''
         if combine:
             t = ', '.join ([c.text for c in elem.getparent().findall (combine)])
@@ -256,7 +196,7 @@ class Transformer (object):
 # main
 # --------------------------------------------------------------------------
 verbosity_levels = dict (debug=logging.DEBUG, info=logging.INFO, warn=logging.WARN, error=logging.ERROR, crit=logging.CRITICAL)
-available_formats = [os.path.splitext (f)[0] for f in glob ("*.cfg")]
+available_formats = [os.path.splitext (f)[0] for f in glob ("*.rules")]
 
 parser = OptionParser ()
 parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src') 
@@ -278,9 +218,11 @@ try:
 except KeyError:
     parser.error ("Invalid verbosity level")
 
-format_cfg = RawConfigParser (dict_type=OrderedDict)
-format_cfg.optionxform = str # prevent configparser from lowercasing our regexes
-format_cfg.read ('%s.cfg' % options.format)
+# format_cfg = RawConfigParser (dict_type=OrderedDict)
+# format_cfg.optionxform = str # prevent configparser from lowercasing our regexes
+# format_cfg.read ('%s.cfg' % options.format)
+format_cfg = RulesParser ()
+format_cfg.parse (file ('%s.rules' % options.format))
 
 parser = etree.XMLParser (dtd_validation=True) 
 
@@ -304,7 +246,11 @@ for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
         for event, element in etree.iterwalk (directive, events=('start', 'end')):
             t = processor.process_element (event, element)
             if t is not None:
-                output.write (t)
+                try:
+                    output.write (t)
+                except UnicodeError, e:
+                    print u"\n\nUnicode error processing the following text:\n{0}\n\n".format (t)
+                    raise
 
             if processor._newfile:
                 target_dir = os.path.join (options.dest_dir, processor.directory (), os.path.splitext (os.path.basename (srcfile))[0])
