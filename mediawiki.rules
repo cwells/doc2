@@ -1,0 +1,242 @@
+##
+# info
+##
+[info]
+description = MediaWiki formatting rules for Nginx docs
+author = Cliff Wells <cliff@nginx.com>
+version = 1.0
+license = BSD
+extension = txt
+directory = mediawiki
+
+##
+# defaults
+##
+[defaults]
+~ ^
+    start:
+        sanitize = True
+        collapse = True
+    end:
+        sanitize = True
+        collapse = True
+
+
+##
+# text substitutions
+##
+[defines]
+pad = (lambda s, c='': c * len (s))
+nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
+tabwidth = 4
+cr = "\n"
+para = "\n\n"
+
+bold = "'''"
+ital = "''"
+list_bullet = "*"
+
+codeblock = '\n\n<geshi lang="nginx">\n{0}\n</geshi>\n'
+preblock = "<code>{0}</code>"
+boldblock = "'''{0}'''"
+italblock = "''{0}''"
+
+
+##
+# rules
+##
+[rules]
+
+# discard everthing not under /module/section/directive
+~ ^/module(?!/section(\[\d+\])?/directive)
+    start:
+        discard = True
+
+~ /directive(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        _name = elem.get ('name')
+        prefix = "== {0} ==".format (_name)
+    end:
+        sanitize = True
+        collapse = True
+        newfile = True
+
+~ /context(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        format = "<td>" + $preblock + "</td></tr></table>"
+        prefix = "{cr}<tr><td>Context:</td>".format (cr=$cr)
+
+~ /context(\[\d+\])
+    start:
+        discard = True
+
+~ /default(\[\d+\])?$:
+    start:
+        sanitize = True   
+        collapse = True
+        strip = True 
+        format = "<td>" + $preblock + "</td></tr>" 
+        prefix = "{cr}</td></tr>{cr}<tr><td>Default:</td>".format (cr=$cr)
+
+~ /syntax(\[1\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        strip = True
+        _name = elem.xpath ('ancestor::directive')[0].get ('name')
+        prefix = '{cr}<table class="syntax"><tr><td>Syntax: </td><td>{cr}{0}'.format (_name, cr=$cr)
+    
+~ /syntax(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        strip = True
+        _name = elem.xpath ('ancestor::directive')[0].get ('name')
+        prefix = "{cr}<br>{0}".format (_name, cr=$cr)
+
+~ /syntax(\[\d+\])?/value(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = " ''{0}''"
+
+~ /syntax(\[\d+\])?/literal(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = " <code>{0}</code>"
+ 
+~ /example(\[\d+\])?$
+    start:
+        sanitize = True   
+        strip = True
+        format = $codeblock
+        indent = $tabwidth
+
+~ /list(\[\d+\])?/tag-name(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        prefix = "{cr}{0}".format ($nestedlist (';'), cr=$cr)
+
+~ /(?P<list>list)(\[\d+\])?/tag-desc(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        prefix = "{cr}{0}".format ($nestedlist (':'), cr=$cr)
+
+~ /listitem(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        prefix = '{cr}{0}'.format ($nestedlist ('*'), cr=$cr)
+
+~ /list(\[\d+\])?$ 
+    start:
+        sanitize = True   
+        collapse = True
+        prefix = $cr
+    end:
+        sanitize = True   
+        collapse = True
+        suffix = $cr
+
+~ /note(\[\d+\])?$
+
+~ /para(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        lstrip = True
+        prefix = $para
+
+~ /c-def(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = "``{0}``"
+    
+~ /c-func(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = "''{0}()''"
+
+~ /link(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = "[{0}|{0}]"
+
+~ /command(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $preblock
+
+~ /emphasis(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $boldblock
+
+~ /header(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $preblock
+
+~ /http-status(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        _http_code = elem.get ('code').strip ()
+        _http_text = elem.get ('text').strip ()
+        replace = "{0} ({1})".format (_http_code, _http_text)
+        format = $preblock
+
+~ /literal(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $preblock
+
+~ /path(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $preblock
+
+~ /value(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $italblock
+
+~ /var(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        format = $preblock
+
+~ /appeared-in(\[\d+\])?$
+    start:
+        sanitize = True   
+        collapse = True
+        prefix = "{cr}Compatiblity: ".format (cr=$cr)
+
+~ /comment\(\)(\[\d+\])?$
+    start:
+        discard = True
+
+# default processing on anything else
+~ .*
+    start:
+        sanitize = True   
+        collapse = True    
+        debug = True
+
