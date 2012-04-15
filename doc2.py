@@ -85,7 +85,7 @@ class Transformer (object):
             tb = traceback.extract_tb (exc_traceback)
             tb_rule, tb_lineno, _, _ = tb [1]
             print "\nError: {3}\nRule: {0}\nEvent: {1}\nLine {2}:\n".format (match, event, tb_lineno, exc_value)
-            print self.indent (self._cfg.src (match, event), indent=4)
+            print self.dd_indent (self._cfg.src (match, event), indent=4)
             print 
             sys.exit (1)
 
