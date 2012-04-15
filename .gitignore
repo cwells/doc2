@@ -1,0 +1,5 @@
+build/
+nginx_org/
+processed/
+*~
+*.pyc
