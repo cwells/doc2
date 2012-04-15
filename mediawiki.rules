@@ -9,18 +9,6 @@ license = BSD
 extension = txt
 directory = mediawiki
 
-##
-# defaults
-##
-[defaults]
-~ ^
-    start:
-        sanitize = True
-        collapse = True
-    end:
-        sanitize = True
-        collapse = True
-
 
 ##
 # text substitutions
@@ -40,6 +28,18 @@ codeblock = '\n\n<geshi lang="nginx">\n{0}\n</geshi>\n'
 preblock = "<code>{0}</code>"
 boldblock = "'''{0}'''"
 italblock = "''{0}''"
+
+##
+# defaults
+##
+[defaults]
+~ ^
+    start:
+        sanitize = True
+        collapse = True
+    end:
+        sanitize = True
+        collapse = True
 
 
 ##
