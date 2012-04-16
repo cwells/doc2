@@ -153,6 +153,7 @@ italblock = "*{0}*"
         sanitize = True
         collapse = True
         lstrip = True
+        prefix = $cr
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
