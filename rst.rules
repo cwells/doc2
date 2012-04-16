@@ -146,10 +146,13 @@ italblock = "*{0}*"
 ~ /example(\[\d+\])?$
     start:
         sanitize = True
-        collapse = True
         strip = True
         format = $codeblock
         indent = $tabwidth
+    end:
+        sanitize = True
+        collapse = True
+        lstrip = True
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
