@@ -24,7 +24,6 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
     
-def is_iterable (o): return hasattr (o, '__contains__')
 
 class Transformer (object):
     def __init__ (self, config):
