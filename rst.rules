@@ -23,7 +23,7 @@ bold = "**"
 ital = "*"
 list_bullet = "-"
 
-codeblock = "\n\n::\n{0}\n\n"
+codeblock = " ::\n{0}\n\n"
 preblock = "``{0}``"
 boldblock = "**{0}**"
 italblock = "*{0}*"
@@ -153,7 +153,6 @@ italblock = "*{0}*"
         sanitize = True
         collapse = True
         lstrip = True
-        prefix = $cr
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
