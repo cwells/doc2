@@ -18,7 +18,6 @@ from glob import glob
 from cStringIO import StringIO
 from lxml import etree
 from optparse import OptionParser
-
 from rulesparser import RulesParser
 try:
     from collections import OrderedDict
