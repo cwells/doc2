@@ -16,6 +16,7 @@ directory = rst
 pad = (lambda s, c=' ': c * len (s))
 nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
 tabwidth = 4
+listindent = 3
 cr = "\n"
 para = "\n\n"
 
@@ -172,18 +173,18 @@ italblock = "*{0}*"
         sanitize = True
         collapse = True
         prefix = $cr
-        indent = 2
+        indent = $listindent
 
 ~ /list(\[\d+\])?/tag-desc(\[\d+\])?/example(\[\d+\])?$
     start:
         sanitize = True
         strip = True
-        indent = 2 + $tabwidth
+        indent = $listindent + $tabwidth
         format = $codeblock
     end:
         sanitize = True
         collapse = True
-        indent = 2
+        indent = $listindent
 
 ~ /example(\[\d+\])?$
     start:
