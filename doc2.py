@@ -53,9 +53,6 @@ class Transformer (object):
     def process_element (self, event, elem):
         logger = logging.getLogger (__name__)
 
-        # Look for a rule that matches the element's xpath.
-        # Rules are processed in order, top down.
-        # The first matching rule is selected.
         xpath = self._root.getpath (elem)
         match, mo = self._cfg.search (xpath)
         
@@ -63,8 +60,8 @@ class Transformer (object):
         if t is None: t = ''
             
         if match is None:
-            logger.warn ('No rule matching {0}'.format (xpath))
-            match = 'NO RULE'
+            logger.warn ('No rule matching {0}, skipping...'.format (xpath))
+            return
 
         vars = {
             're': re,
