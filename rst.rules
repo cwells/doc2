@@ -143,17 +143,6 @@ italblock = "*{0}*"
         _next = getattr (elem, 'tail', None)
         suffix = " " if _next is not None and _next [-1:] == '|' else ""
 
-~ /example(\[\d+\])?$
-    start:
-        sanitize = True
-        strip = True
-        indent = $tabwidth
-        format = $codeblock    
-    end:
-        sanitize = True
-        collapse = True
-        lstrip = True
-
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
         sanitize = True
@@ -184,6 +173,28 @@ italblock = "*{0}*"
         collapse = True
         prefix = $cr
         indent = 2
+
+~ /list(\[\d+\])?/tag-desc(\[\d+\])?/example(\[\d+\])?$
+    start:
+        sanitize = True
+        strip = True
+        indent = 2 + $tabwidth
+        format = $codeblock
+    end:
+        sanitize = True
+        collapse = True
+        indent = 2
+
+~ /example(\[\d+\])?$
+    start:
+        sanitize = True
+        strip = True
+        indent = $tabwidth
+        format = $codeblock    
+    end:
+        sanitize = True
+        collapse = True
+        lstrip = True
 
 ~ /listitem(\[\d+\])?$
     start:

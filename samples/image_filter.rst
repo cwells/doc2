@@ -29,14 +29,14 @@ Sets the type of transformation to perform on images:
    ensures that responses are images in either JPEG, GIF, or PNG format. Otherwise, the error ``415 (Unsupported Media Type)`` is returned.  
 ``size``   
    outputs information about images in a JSON format, e.g.:  ::
+      
+      { "img" : { "width": 100, "height": 100, "type": "gif" } }
+      
+   In case of an error, the following is output:  ::
+      
+      {}
+      
     
-    { "img" : { "width": 100, "height": 100, "type": "gif" } }
-    
-In case of an error, the following is output:  ::
-    
-    {}
-    
- 
 ``rotate`` ``90`` | ``180`` | ``270``    
    rotates images counter-clockwise by the specified number of degrees. Value of the parameter can contain variables. Can be used either alone, or along with the ``resize`` and ``crop`` transformations.  
 ``resize`` ``width`` ``height``    
