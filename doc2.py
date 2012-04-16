@@ -34,6 +34,7 @@ class Transformer (object):
         self._store = {}
         self.last_output = ''
         self.directives = [f [len ('dd_'):] for f in dir (self) if f.startswith ('dd_')]
+        self._globals = {}
 
     def description (self):
         return self._cfg.get ('info')['description']
@@ -71,11 +72,12 @@ class Transformer (object):
             'last_output': self.last_output,
             'match': mo,
             'regex': match,
-            'xpath': xpath
+            'xpath': xpath,
+            'globals': self._globals
         }
  
         try:
-            exec (self._cfg.obj (match, event), {}, vars)
+            exec (self._cfg.obj (match, event), self._globals, vars)
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info ()
             tb = traceback.extract_tb (exc_traceback)
@@ -169,7 +171,7 @@ class Transformer (object):
 
     def dd_store (self, t, store=None, **_):
         if store:
-            # print "store", _['re_match'].group (0)
+            # print ("store", _['re_match'].group (0))
             self._store.setdefault (store, [])
             self._store [store].append (t)
             return None
@@ -177,7 +179,7 @@ class Transformer (object):
 
     def dd_retrieve (self, t, retrieve=None, **_):
         if retrieve:
-            # print "retrieve", _['re_match'].group (0)
+            # print ("retrieve", _['re_match'].group (0))
             self._store [retrieve].append (t)
             t = ', '.join (self._store [retrieve])
             del self._store [retrieve]

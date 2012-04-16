@@ -59,7 +59,7 @@ italblock = "*{0}*"
         prefix = "{pad}{cr}{0}{cr}{pad}".format (_name, pad=$pad (_name, '='), cr=$cr)
     end:
         sanitize = True
-        collapse = True        
+        collapse = True
         newfile = True
 
 ~ /context(\[1\])?$

@@ -146,6 +146,7 @@ Variables  (type, default)
 :retrieve: (string, None)    retrieve the elements stored in array named string
 :begin:    (list)            control processing sequence of the begin event
 :end:      (list)            control processing sequence of the end event
+:globals:  (dict, {})        global namespace.  Use globals['foo'] = "bar" to have values persist across events
 
 The order of these variables determines not only which directives are called, but also the order the directives are processed in. 
 For example::

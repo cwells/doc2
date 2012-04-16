@@ -49,7 +49,7 @@ class RulesParser (object):
         nonbracket = "".join ([ c for c in printables if c not in ['[',']'] ]) + " \t"
 
         sectionDef = lbracket + Word (nonbracket) + rbracket
-        keyDef   = ~tilde + Word (printables) + equals + ZeroOrMore (Literal (' ')).suppress () + restOfLine
+        keyDef = ~tilde + Word (printables) + ZeroOrMore (Literal(' ')).suppress () + equals + ZeroOrMore (Literal (' ')).suppress () + restOfLine
         eventDef = Word (noncolon) + colon
         regexDef = tilde + ZeroOrMore (White (' \t').suppress ()) + restOfLine
         
@@ -187,13 +187,14 @@ if __name__ == '__main__':
     [rules]
     ~ /directive(\[\d+\])?$
         start:
-            newfile = True
+            globals()['x'] = 'y'
             _name = 'foo'
             prefix = "{0}{cr}".format (_name, cr=$cr)
         end:
             sanitize = True
             collapse = True
-    
+            newfile = True
+
     ~ /context(\[1\])?$
         start:
             combine = "context"
