@@ -194,9 +194,9 @@ italblock = "''{0}''"
     start:
         sanitize = True   
         collapse = True
-        _http_code = elem.get ('code').strip ()
-        _http_text = elem.get ('text').strip ()
-        replace = "{0} ({1})".format (_http_code, _http_text)
+        _code = elem.get ('code').strip ()
+        _text = elem.get ('text').strip ()
+        replace = "{0} ({1})".format (_code, _text)
         format = $preblock
 
 ~ /literal(\[\d+\])?$
@@ -235,8 +235,4 @@ italblock = "''{0}''"
 
 # default processing on anything else
 ~ .*
-    start:
-        sanitize = True   
-        collapse = True    
-        debug = True
 

@@ -214,14 +214,14 @@ try:
 except KeyError:
     parser.error ("Invalid verbosity level")
 
-rules = RulesParser ()
-rules.parse (file ('%s.rules' % options.format))
-
-parser = etree.XMLParser (dtd_validation=True) 
 
 logger = logging.getLogger (__name__)
 logger.setLevel (options.verbosity)
 
+rules = RulesParser ()
+rules.parse (file ('%s.rules' % options.format))
+
+parser = etree.XMLParser (dtd_validation=True) 
 processor = Transformer (rules)
 logger.info (processor.description ())
 
