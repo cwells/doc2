@@ -147,8 +147,8 @@ italblock = "*{0}*"
     start:
         sanitize = True
         strip = True
-        format = $codeblock
         indent = $tabwidth
+        format = $codeblock    
     end:
         sanitize = True
         collapse = True
