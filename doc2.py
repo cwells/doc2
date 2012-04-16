@@ -10,7 +10,7 @@
 # (c) Cliff Wells, 2012  <cliff@nginx.com>
 # --------------------------------------------------------------------------
 
-
+from __future__ import print_function
 import os, sys, errno, traceback
 import logging; logging.basicConfig ()
 import re, string
@@ -80,9 +80,8 @@ class Transformer (object):
             exc_type, exc_value, exc_traceback = sys.exc_info ()
             tb = traceback.extract_tb (exc_traceback)
             tb_rule, tb_lineno, _, _ = tb [1]
-            print "\nError: {3}\nRule: {0}\nEvent: {1}\nLine {2}:\n".format (match, event, tb_lineno, exc_value)
-            print self.dd_indent (self._cfg.src (match, event), indent=4)
-            print 
+            print ("\nError: {3}\nRule: {0}\nEvent: {1}\nLine {2}:\n".format (match, event, tb_lineno, exc_value), file=sys.stderr)
+            print (self.dd_indent (self._cfg.src (match, event), indent=4), file=sys.stderr)
             sys.exit (1)
 
         for directive in self._cfg.settings (match, event):
@@ -242,7 +241,7 @@ for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
                 try:
                     output.write (t)
                 except UnicodeError, e:
-                    print u"\n\nUnicode error processing the following text:\n{0}\n\n".format (t)
+                    print (u"\n\nUnicode error processing the following text:\n{0}\n\n".format (t), file=sys.stderr)
                     raise
 
             if processor._newfile:

@@ -6,18 +6,18 @@
 # (c) Cliff Wells, 2012  <cliff@nginx.com>
 # --------------------------------------------------------------------------
 
-from pyparsing import (
-    Literal, Word, White, ZeroOrMore, OneOrMore,
-    Group, Dict, Optional, printables, ParseException, restOfLine
-)
+from __future__ import print_function
+import logging
+import string
+import re
 try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
-import logging
-import string
-import re
-
+from pyparsing import (
+    Literal, Word, White, ZeroOrMore, OneOrMore,
+    Group, Dict, Optional, printables, ParseException, restOfLine
+)
 
 def tokens2dict (tokens):
     return OrderedDict ([(t [0], t [1:]) for t in tokens])
@@ -208,13 +208,13 @@ if __name__ == '__main__':
     c = config.parse (cfg)
 
     for r in config.rules ():
-        print r
+        print (r)
         for e in config.events (r):
-            print "\t", e
+            print ("\t{0}".format (e))
             for k, v in config.settings (r, e).items ():
-                print "\t\t", k, v
+                print ("\t\t{0} = {1}".format (k, v))
 
-    print "Searching"
-    print config.search ("/module/section[3]/directive[1]")
+    print ("Searching")
+    print (config.search ("/module/section[3]/directive[1]"))
 
 
