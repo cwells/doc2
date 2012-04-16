@@ -23,7 +23,7 @@ bold = "**"
 ital = "*"
 list_bullet = "-"
 
-codeblock = " ::\n{0}\n\n"
+codeblock = " ::\n{0}\n"
 preblock = "``{0}``"
 boldblock = "**{0}**"
 italblock = "*{0}*"

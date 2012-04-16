@@ -32,12 +32,10 @@ Sets the type of transformation to perform on images:
     
     { "img" : { "width": 100, "height": 100, "type": "gif" } }
     
-
 In case of an error, the following is output:  ::
     
     {}
     
-
  
 ``rotate`` ``90`` | ``180`` | ``270``    
    rotates images counter-clockwise by the specified number of degrees. Value of the parameter can contain variables. Can be used either alone, or along with the ``resize`` and ``crop`` transformations.  
