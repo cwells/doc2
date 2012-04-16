@@ -204,7 +204,6 @@ parser.add_option ("-r", "--root", dest="root_element", help="the root element, 
 parser.add_option ("-a", "--attribute", dest="fname_attribute", help="files will be named for this attribute of the ROOT element", metavar="ATTR")
 parser.add_option ("-f", "--format", dest="format", help="output format [{0}]".format ('|'.join (available_formats)), metavar="FORMAT")
 parser.add_option ("-v", "--verbosity", dest="verbosity", help="set verbosity [{0}]".format ('|'.join (verbosity_levels)), metavar="LEVEL")
-
 (options, args) = parser.parse_args ()
 
 if options.format not in available_formats:
@@ -229,7 +228,7 @@ logger.info (processor.description ())
 # for each xml file
 for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
     tree = etree.parse (srcfile, parser)
-    # logger.info ("  processing: {0}".format (os.path.basename (srcfile)))
+    logger.debug ("  processing: {0}".format (os.path.basename (srcfile)))
 
     # for each element, in its own output file
     for directive in tree.xpath (options.root_element):
@@ -249,7 +248,7 @@ for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
             if processor._newfile:
                 target_dir = os.path.join (options.dest_dir, processor.directory (), os.path.splitext (os.path.basename (srcfile))[0])
                 output_file = '{0}.{1}'.format (os.path.join (target_dir, element.get (options.fname_attribute)), processor.extension ())
-                # logger.debug ("      -> {0}".format (output_file))
+                logger.debug ("      -> {0}".format (output_file))
 
                 # mkdir -p
                 try:
