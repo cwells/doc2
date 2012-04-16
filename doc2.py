@@ -18,7 +18,7 @@ from glob import glob
 from cStringIO import StringIO
 from lxml import etree
 from optparse import OptionParser
-# from ConfigParser import RawConfigParser
+
 from rulesparser import RulesParser
 try:
     from collections import OrderedDict
@@ -219,18 +219,15 @@ try:
 except KeyError:
     parser.error ("Invalid verbosity level")
 
-# format_cfg = RawConfigParser (dict_type=OrderedDict)
-# format_cfg.optionxform = str # prevent configparser from lowercasing our regexes
-# format_cfg.read ('%s.cfg' % options.format)
-format_cfg = RulesParser ()
-format_cfg.parse (file ('%s.rules' % options.format))
+rules = RulesParser ()
+rules.parse (file ('%s.rules' % options.format))
 
 parser = etree.XMLParser (dtd_validation=True) 
 
 logger = logging.getLogger (__name__)
 logger.setLevel (options.verbosity)
 
-processor = Transformer (format_cfg)
+processor = Transformer (rules)
 logger.info (processor.description ())
 
 # for each xml file
