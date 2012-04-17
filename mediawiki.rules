@@ -215,7 +215,7 @@ italblock = "''{0}''"
         sanitize = True   
         collapse = True
         format = $preblock
-        prefix = "" if last_output [-1:] in string.whitespace + '"' + "'" else " "
+        prefix = " " if last_output.endswith ('|') else ""
     end:
         sanitize = True   
         collapse = True
