@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------
 
 from __future__ import print_function
+import sys
 import logging
 import string
 import re
+import traceback
 try:
     from collections import OrderedDict
 except ImportError:
@@ -66,7 +68,13 @@ class RulesParser (object):
         for rule in rules:
             regex = rule [0]
             config [regex] = OrderedDict ()
-            config [regex]['.re'] = re.compile (regex)
+            try:
+                config [regex]['.re'] = re.compile (regex)
+            except:
+                exc_type, exc_value, exc_traceback = sys.exc_info ()
+                print ("\nRegex Error: {0}\nRule: {1}\n".format (exc_value, regex), file=sys.stderr)
+                sys.exit (1)
+
             events = tokens2dict (rule [1:])
             for e in events:
                 config [regex][e] = OrderedDict ()
@@ -90,8 +98,24 @@ class RulesParser (object):
             for rule, event in config.get (section, {}).items ():
                 for e, keyblock in event.items ():
                     if e.startswith ('.'): continue
-                    code = string.Template (keyblock ['.src']).substitute (config.get ('defines', {}))
-                    keyblock ['.obj'] = compile (code, "{0} {1}".format (rule, e), 'exec')
+                    try:
+                        code = string.Template (keyblock ['.src']).substitute (config.get ('defines', {}))
+                    except KeyError, exc:
+                        print ("\nException parsing rule:\n", file=sys.stderr)
+                        print ("~ {0}\n\t{1}:".format (rule, e), file=sys.stderr)
+                        print ('\t\t' + keyblock ['.src'].replace ('\n', '\n\t\t'), file=sys.stderr)
+                        print ("\nKeyError: {0}\n".format (exc), file=sys.stderr)
+                        sys.exit (1)
+
+                    try:
+                        keyblock ['.obj'] = compile (code, "{0} {1}".format (rule, e), 'exec')
+                    except SyntaxError, exc:
+                        print ("\nException parsing rule:\n", file=sys.stderr)
+                        print ("~ {0}\n\t{1}:".format (rule, e), file=sys.stderr)
+                        print ('\t\t' + keyblock ['.src'].replace ('\n', '\n\t\t'), file=sys.stderr)
+                        print ("\nSyntaxError line {0}, char {1}\n".format (exc.lineno, exc.offset), file=sys.stderr)
+                        sys.exit (1)
+
 
     def parse (self, config):
         if type (config) != type (""):

@@ -88,7 +88,7 @@ class Transformer (object):
         for directive in self._cfg.settings (match, event):
             if t is None: return
             if directive in self.directives:
-                method = getattr (self, "dd_{0}".format (directive), None)
+                method = getattr (self, "dd_{0}".format (directive))
                 t = method (t, **vars)
         
         if t is not None:
@@ -168,20 +168,24 @@ class Transformer (object):
             t = ', '.join ([c.text for c in elem.getparent().findall (combine)])
         return t
 
-    def dd_store (self, t, store=None, **_):
+    def dd_store (self, t, store=None, debug=False, **_):
         if store:
-            # print ("store", _['re_match'].group (0))
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tstore ({0}, {1})".format (store, t), file=sys.stderr)
             self._store.setdefault (store, [])
             self._store [store].append (t)
             return None
         return t
 
-    def dd_retrieve (self, t, retrieve=None, **_):
+    def dd_retrieve (self, t, retrieve=None, debug=False, **_):
         if retrieve:
-            # print ("retrieve", _['re_match'].group (0))
-            self._store [retrieve].append (t)
-            t = ', '.join (self._store [retrieve])
-            del self._store [retrieve]
+            if retrieve in self._store:
+                t = ', '.join (self._store [retrieve])
+                if debug:
+                    print ("{xpath}".format (**_))
+                    print ("\tretrieve ({0}) = {1}".format (retrieve, t), file=sys.stderr)
+                del self._store [retrieve]
         return t
 
     def dd_newfile (self, t, newfile=False, **_):

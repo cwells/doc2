@@ -15,8 +15,10 @@ directory = mediawiki
 ##
 [defines]
 pad = (lambda s, c='': c * len (s))
+listdepth = (lambda re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)))()
 nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
 tabwidth = 4
+listindent = 3
 cr = "\n"
 para = "\n\n"
 
@@ -24,7 +26,7 @@ bold = "'''"
 ital = "''"
 list_bullet = "*"
 
-codeblock = '\n\n<geshi lang="nginx">\n{0}\n</geshi>\n'
+codeblock = '\n<geshi lang="nginx">\n{0}\n</geshi>\n'
 preblock = "<code>{0}</code>"
 boldblock = "'''{0}'''"
 italblock = "''{0}''"
@@ -110,12 +112,21 @@ italblock = "''{0}''"
         collapse = True
         format = " <code>{0}</code>"
  
+~ /(tag-desc|listitem)(\[\d+\])?/example(\[\d+\])?$
+    start:
+        sanitize = True
+        strip = True
+        format = $codeblock
+    end:
+        sanitize = True
+        collapse = True
+        prefix = "{0}".format ($nestedlist (':'), cr=$cr)
+
 ~ /example(\[\d+\])?$
     start:
         sanitize = True   
         strip = True
         format = $codeblock
-        indent = $tabwidth
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
