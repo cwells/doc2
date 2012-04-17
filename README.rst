@@ -130,7 +130,7 @@ A rule may set special variables that control the generated output:
 
 Variables  (type, default) 
 --------------------------
-:debug:    (boolean, False)  cause some output to be generated whenever this rule is matched
+:debug:    (boolean, False)  cause some output to be generated whenever this rule is matched, regardless of -v option
 :discard:  (boolean, False)  causes the current element to be discarded
 :replace:  (string, None)    replace the current element with string
 :combine:  (boolean, False)  combine all similar sibling elements into a single comma-separated string
@@ -161,7 +161,7 @@ For example::
 
 When the ``begin`` event is handled, the result is equivalent to the following::
     
-    prefix (collapse (sanitize (text)), "<")
+    prefix (collapse (sanitize (text)))
 
 ``begin`` corresponds to the opening tag of an element, ``end`` corresponds with the closing tag (these are known as "events").
 
