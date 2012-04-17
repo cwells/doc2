@@ -26,7 +26,7 @@ bold = "'''"
 ital = "''"
 list_bullet = "*"
 
-codeblock = '\n<geshi lang="nginx">\n{0}\n</geshi>\n'
+codeblock = '\n<geshi lang="nginx">{0}</geshi>\n'
 preblock = "<code>{0}</code>"
 boldblock = "'''{0}'''"
 italblock = "''{0}''"
