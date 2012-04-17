@@ -120,7 +120,7 @@ italblock = "''{0}''"
     end:
         sanitize = True
         collapse = True
-        prefix = "{0}".format ($nestedlist (':'), cr=$cr)
+        prefix = $nestedlist (':')
 
 ~ /example(\[\d+\])?$
     start:
@@ -215,6 +215,11 @@ italblock = "''{0}''"
         sanitize = True   
         collapse = True
         format = $preblock
+        prefix = "" if last_output [-1:] in string.whitespace + '"' + "'" else " "
+    end:
+        sanitize = True   
+        collapse = True
+        suffix = " " if elem.tail and elem.tail.startswith ('|') else ""
 
 ~ /path(\[\d+\])?$
     start:
