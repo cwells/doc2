@@ -74,7 +74,7 @@ italblock = "''{0}''"
         strip = True
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _starttable = "<table>" if _prev == "directive" else ""
-        _name = $br + elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
         prefix = '{table}{cr}<tr><td>{tag}:</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=elem.tag, name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
@@ -104,7 +104,7 @@ italblock = "''{0}''"
         sanitize = True
         collapse = True
         strip = True
-        format = " ''{0}''"
+        format = " ''{0}'' "
     end:
         sanitize = True
         collapse = True
@@ -115,7 +115,7 @@ italblock = "''{0}''"
         sanitize = True
         collapse = True
         strip = True
-        format = " <code>{0}</code>"
+        format = " <code>{0}</code> "
     end:
         sanitize = True
         collapse = True
