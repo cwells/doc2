@@ -14,19 +14,13 @@ directory = mediawiki
 # text substitutions
 ##
 [defines]
-pad = (lambda s, c='': c * len (s))
-listdepth = (lambda re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)))()
 nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
-tabwidth = 4
-listindent = 3
 cr = "\n"
 para = "\n\n"
-
 bold = "'''"
 ital = "''"
 list_bullet = "*"
 br = "<br>"
-
 codeblock = '\n<geshi lang="nginx">{0}</geshi>\n'
 preblock = "<code>{0}</code>"
 boldblock = "'''{0}'''"
