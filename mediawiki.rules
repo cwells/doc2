@@ -63,7 +63,7 @@ italblock = "''{0}''"
         collapse = True
         newfile = True
 
-~ /(syntax|context|default)(\[1\])?$
+~ /(syntax|context|default|appeared-in)(\[1\])?$
     start:
         sanitize = True
         collapse = True
@@ -80,7 +80,7 @@ italblock = "''{0}''"
         _endtable = "</table>" if _next == "para" else ""
         suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
 
-~ /(syntax|context|default)(\[\d+\])?$
+~ /(syntax|context|default|appeared-in)(\[\d+\])?$
     start:
         sanitize = True
         collapse = True
@@ -95,7 +95,7 @@ italblock = "''{0}''"
         _endtable = "</table>" if _next == "para" else ""
         suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
 
-~ /(syntax|context|default)(\[\d+\])?/value(\[\d+\])?$
+~ /(syntax|context|default|appeared-in)(\[\d+\])?/value(\[\d+\])?$
     start:
         sanitize = True
         collapse = True
@@ -106,7 +106,7 @@ italblock = "''{0}''"
         collapse = True
         strip = True
 
-~ /(syntax|context|default)(\[\d+\])?/literal(\[\d+\])?$
+~ /(syntax|context|default|appeared-in)(\[\d+\])?/literal(\[\d+\])?$
     start:
         sanitize = True
         collapse = True
@@ -246,12 +246,6 @@ italblock = "''{0}''"
         sanitize = True
         collapse = True
         format = $preblock
-
-~ /appeared-in(\[\d+\])?$
-    start:
-        sanitize = True
-        collapse = True
-        prefix = "{cr}Compatiblity: ".format (cr=$cr)
 
 ~ /comment\(\)(\[\d+\])?$
     start:
