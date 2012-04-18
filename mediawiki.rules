@@ -48,6 +48,8 @@ italblock = "''{0}''"
 ~ ^/module(?!/section(\[\d+\])?/directive)
     start:
         discard = True
+    end:
+        discard = True
 
 ~ /directive(\[\d+\])?$
     start:
@@ -258,6 +260,10 @@ italblock = "''{0}''"
 # default processing on anything else
 ~ .*
     start:
-        discard = True
+        sanitize = True
+        collapse = True
+        debug = True
     end:
-        discard = True
+        sanitize = True
+        collapse = True
+        debug = True
