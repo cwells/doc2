@@ -98,13 +98,19 @@ class Transformer (object):
     #
     # directive definitions
     #
-    def dd_discard (self, t, discard=False, **_):
+    def dd_discard (self, t, discard=False, debug=False, **_):
         if discard:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tdiscard ({0})".format (t), file=sys.stderr)
             return None
         return t
 
-    def dd_replace (self, t, replace=None, **_):
+    def dd_replace (self, t, replace=None, debug=False, **_):
         if replace:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\treplace ({0})".format (t), file=sys.stderr)
             t = replace
         return t
 
@@ -147,34 +153,52 @@ class Transformer (object):
             return t.rstrip ()
         return t
 
-    def dd_format (self, t, format = None, **_):
+    def dd_format (self, t, format = None, debug=False, **_):
         '''format using Python string.format
         '''
         if format:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tformat ({0}) = {1}".format (t, format.format (t)), file=sys.stderr)
             return format.format (t)
         return t
 
-    def dd_indent (self, t, indent=4, **_):
+    def dd_indent (self, t, indent=4, debug=False, **_):
         ''' indent a region
         '''
-        lines = t.split ('\n')
-        return '\n'.join ([(" " * indent + l) for l in lines])
+        if indent:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tindent ({0}, {1})".format (t, indent), file=sys.stderr)
+            lines = t.split ('\n')
+            return '\n'.join ([(" " * indent + l) for l in lines])
+        return t
 
-    def dd_prefix (self, t, prefix='', **_):
+    def dd_prefix (self, t, prefix='', debug=False, **_):
         ''' prepend a string
         '''
+        if debug:
+            print ("{xpath}".format (**_))
+            print ("\tprefix ({0}) = {1}".format (t, prefix + t), file=sys.stderr)
         return prefix + t
 
-    def dd_suffix (self, t, suffix='', **_):
+    def dd_suffix (self, t, suffix='', debug=False, **_):
         ''' append a string
         '''
+        if debug:
+            print ("{xpath}".format (**_))
+            print ("\tsuffix ({0}) = {1}".format (t, suffix + t), file=sys.stderr)
         return suffix + t
 
-    def dd_combine (self, t, elem=None, event=None, combine=None, **_):
+    def dd_combine (self, t, elem=None, combine=None, debug=False, **_):
         ''' combine all identical siblings in a single, comma-separated string
         '''
         if combine:
             t = ', '.join ([c.text for c in elem.getparent().findall (combine)])
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tcombine ({0}) = {1}".format (combine, t), file=sys.stderr)
+
         return t
 
     def dd_store (self, t, store=None, debug=False, **_):
@@ -197,7 +221,10 @@ class Transformer (object):
                 del self._store [retrieve]
         return t
 
-    def dd_newfile (self, t, newfile=False, **_):
+    def dd_newfile (self, t, newfile=False, debug=False, **_):
+        if debug:
+            print ("{xpath}".format (**_))
+            print ("\tnewfile ()", file=sys.stderr)
         self._newfile = newfile
         return t
 
