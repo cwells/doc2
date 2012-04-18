@@ -85,6 +85,9 @@ class Transformer (object):
             print ("{0}\n\n".format (self.dd_indent (self._cfg.src (match, event), indent=4)), file=sys.stderr)
             sys.exit (1)
 
+        if vars.get ('debug', False):
+            print ("\n{xpath}\n-----------------------------".format (**vars))
+
         for directive in self._cfg.settings (match, event):
             if t is None: return
             if directive in self.directives:
@@ -101,7 +104,6 @@ class Transformer (object):
     def dd_discard (self, t, discard=False, debug=False, **_):
         if discard:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tdiscard ({0})".format (t), file=sys.stderr)
             return None
         return t
@@ -109,7 +111,6 @@ class Transformer (object):
     def dd_replace (self, t, replace=None, debug=False, **_):
         if replace:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\treplace ({0})".format (t), file=sys.stderr)
             t = replace
         return t
@@ -132,7 +133,6 @@ class Transformer (object):
     def dd_strip (self, t, strip=False, debug=False, **_):
         if strip:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tstrip ({0})".format (t), file=sys.stderr)
             return t.strip ()
         return t
@@ -140,7 +140,6 @@ class Transformer (object):
     def dd_lstrip (self, t, lstrip=False, debug=False, **_):
         if lstrip:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tlstrip ({0})".format (t), file=sys.stderr)
             return t.lstrip ()
         return t
@@ -148,7 +147,6 @@ class Transformer (object):
     def dd_rstrip (self, t, rstrip=False, debug=False, **_):
         if rstrip:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\trstrip ({0})".format (t), file=sys.stderr)
             return t.rstrip ()
         return t
@@ -158,7 +156,6 @@ class Transformer (object):
         '''
         if format:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tformat ({0}) = {1}".format (t, format.format (t)), file=sys.stderr)
             return format.format (t)
         return t
@@ -168,7 +165,6 @@ class Transformer (object):
         '''
         if indent:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tindent ({0}, {1})".format (t, indent), file=sys.stderr)
             lines = t.split ('\n')
             return '\n'.join ([(" " * indent + l) for l in lines])
@@ -178,7 +174,6 @@ class Transformer (object):
         ''' prepend a string
         '''
         if debug:
-            print ("{xpath}".format (**_))
             print ("\tprefix ({0}) = {1}".format (t, prefix + t), file=sys.stderr)
         return prefix + t
 
@@ -186,7 +181,6 @@ class Transformer (object):
         ''' append a string
         '''
         if debug:
-            print ("{xpath}".format (**_))
             print ("\tsuffix ({0}) = {1}".format (t, suffix + t), file=sys.stderr)
         return suffix + t
 
@@ -196,7 +190,6 @@ class Transformer (object):
         if combine:
             t = ', '.join ([c.text for c in elem.getparent().findall (combine)])
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tcombine ({0}) = {1}".format (combine, t), file=sys.stderr)
 
         return t
@@ -204,7 +197,6 @@ class Transformer (object):
     def dd_store (self, t, store=None, debug=False, **_):
         if store:
             if debug:
-                print ("{xpath}".format (**_))
                 print ("\tstore ({0}, {1})".format (store, t), file=sys.stderr)
             self._store.setdefault (store, [])
             self._store [store].append (t)
@@ -216,14 +208,12 @@ class Transformer (object):
             if retrieve in self._store:
                 t = ', '.join (self._store [retrieve])
                 if debug:
-                    print ("{xpath}".format (**_))
                     print ("\tretrieve ({0}) = {1}".format (retrieve, t), file=sys.stderr)
                 del self._store [retrieve]
         return t
 
     def dd_newfile (self, t, newfile=False, debug=False, **_):
         if debug:
-            print ("{xpath}".format (**_))
             print ("\tnewfile ()", file=sys.stderr)
         self._newfile = newfile
         return t
