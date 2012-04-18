@@ -71,7 +71,8 @@ italblock = "''{0}''"
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _starttable = "<table>" if _prev == "directive" else ""
         _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
-        prefix = '{table}{cr}<tr><td>{tag}:</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=elem.tag, name=_name, cr=$cr, br=$br)
+        _tag = elem.tag.capitalize ().replace ('-', ' ')
+        prefix = '{table}{cr}<tr><td>{tag}:</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
         collapse = True
@@ -125,6 +126,7 @@ italblock = "''{0}''"
     end:
         sanitize = True
         collapse = True
+        lstrip = True
         prefix = $nestedlist (':')
 
 ~ /example(\[\d+\])?$
@@ -132,6 +134,10 @@ italblock = "''{0}''"
         sanitize = True
         strip = True
         format = $codeblock
+    end:
+        sanitize = True
+        collapse = True
+        lstrip = True
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
