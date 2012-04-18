@@ -25,6 +25,7 @@ para = "\n\n"
 bold = "'''"
 ital = "''"
 list_bullet = "*"
+br = "<br>"
 
 codeblock = '\n<geshi lang="nginx">{0}</geshi>\n'
 preblock = "<code>{0}</code>"
@@ -58,60 +59,68 @@ italblock = "''{0}''"
     start:
         sanitize = True
         collapse = True
+        strip = True
         _name = elem.get ('name')
-        prefix = "== {0} ==".format (_name)
+        prefix = "== {0} ==\n".format (_name)
     end:
         sanitize = True
         collapse = True
         newfile = True
 
-~ /context(\[1\])?$
+~ /(syntax|context|default)(\[1\])?$
     start:
         sanitize = True
         collapse = True
-        format = "<td>" + $preblock + "</td></tr></table>"
-        prefix = "{cr}<tr><td>Context:</td>".format (cr=$cr)
-
-~ /context(\[\d+\])
-    start:
-        discard = True
-
-~ /default(\[\d+\])?$:
-    start:
-        sanitize = True   
-        collapse = True
-        strip = True 
-        format = "<td>" + $preblock + "</td></tr>" 
-        prefix = "{cr}</td></tr>{cr}<tr><td>Default:</td>".format (cr=$cr)
-
-~ /syntax(\[1\])?$
-    start:
-        sanitize = True   
+        strip = True
+        _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
+        _starttable = "<table>" if _prev == "directive" else ""
+        _name = $br + elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        prefix = '{table}{cr}<tr><td>{tag}:</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=elem.tag, name=_name, cr=$cr, br=$br)
+    end:
+        sanitize = True
         collapse = True
         strip = True
-        _name = elem.xpath ('ancestor::directive')[0].get ('name')
-        prefix = '{cr}<table class="syntax"><tr><td>Syntax: </td><td>{cr}{0}'.format (_name, cr=$cr)
-    
-~ /syntax(\[\d+\])?$
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        _endtable = "</table>" if _next == "para" else ""
+        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+
+~ /(syntax|context|default)(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         strip = True
-        _name = elem.xpath ('ancestor::directive')[0].get ('name')
-        prefix = "{cr}<br>{0}".format (_name, cr=$cr)
-
-~ /syntax(\[\d+\])?/value(\[\d+\])?$
-    start:
-        sanitize = True   
+        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        prefix = '{br}{name}'.format (name=_name, cr=$cr, br=$br)
+    end:
+        sanitize = True
         collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        _endtable = "</table>" if _next == "para" else ""
+        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+
+~ /(syntax|context|default)(\[\d+\])?/value(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
         format = " ''{0}''"
-
-~ /syntax(\[\d+\])?/literal(\[\d+\])?$
-    start:
-        sanitize = True   
+    end:
+        sanitize = True
         collapse = True
+        strip = True
+
+~ /(syntax|context|default)(\[\d+\])?/literal(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
         format = " <code>{0}</code>"
- 
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+
 ~ /(tag-desc|listitem)(\[\d+\])?/example(\[\d+\])?$
     start:
         sanitize = True
@@ -124,35 +133,35 @@ italblock = "''{0}''"
 
 ~ /example(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         strip = True
         format = $codeblock
 
 ~ /list(\[\d+\])?/tag-name(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         prefix = "{cr}{0}".format ($nestedlist (';'), cr=$cr)
 
 ~ /(?P<list>list)(\[\d+\])?/tag-desc(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         prefix = "{cr}{0}".format ($nestedlist (':'), cr=$cr)
 
 ~ /listitem(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         prefix = '{cr}{0}'.format ($nestedlist ('*'), cr=$cr)
 
-~ /list(\[\d+\])?$ 
+~ /list(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         prefix = $cr
     end:
-        sanitize = True   
+        sanitize = True
         collapse = True
         suffix = $cr
 
@@ -160,50 +169,53 @@ italblock = "''{0}''"
 
 ~ /para(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         lstrip = True
         prefix = $para
 
 ~ /c-def(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = "``{0}``"
-    
+
 ~ /c-func(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = "''{0}()''"
 
 ~ /link(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
-        format = "[{0}|{0}]"
+        _doc = re.sub (ur'(\.\./)?(.+?)\.xml', ur'\2', elem.get ('doc')) if elem.get ('doc') else ""
+        _id = "#{0}".format (elem.get ('id')) if elem.get ('id') else ""
+        _text = "{0}" if elem.text else elem.get ('id')
+        format = "[[{0}{1}|{2}]]".format (_doc, _id, _text)
 
 ~ /command(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $preblock
 
 ~ /emphasis(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $boldblock
 
 ~ /header(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $preblock
 
 ~ /http-status(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         _code = elem.get ('code').strip ()
         _text = elem.get ('text').strip ()
@@ -212,36 +224,36 @@ italblock = "''{0}''"
 
 ~ /literal(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $preblock
         prefix = " " if last_output.endswith ('|') else ""
     end:
-        sanitize = True   
+        sanitize = True
         collapse = True
         suffix = " " if elem.tail and elem.tail.startswith ('|') else ""
 
 ~ /path(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $preblock
 
 ~ /value(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $italblock
 
 ~ /var(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         format = $preblock
 
 ~ /appeared-in(\[\d+\])?$
     start:
-        sanitize = True   
+        sanitize = True
         collapse = True
         prefix = "{cr}Compatiblity: ".format (cr=$cr)
 
@@ -251,4 +263,7 @@ italblock = "''{0}''"
 
 # default processing on anything else
 ~ .*
-
+    start:
+        discard = True
+    end:
+        discard = True

@@ -42,10 +42,11 @@ class RulesParser (object):
         equals = Literal ("=").suppress ()
         colon  = Literal (":").suppress ()
         pound  = Literal ("#")
+        semi = Literal (';')
         startEvent = Literal ('start')
         endEvent = Literal ('end')
-        
-        comment  = pound + Optional (restOfLine)
+
+        comment  = (pound ^ semi) + Optional (restOfLine)
         nonequals = "".join ([ c for c in printables if c != "=" ]) + " \t"
         noncolon  = "".join ([ c for c in printables if c != ":" ]) + " \t"
         nonbracket = "".join ([ c for c in printables if c not in ['[',']'] ]) + " \t"
@@ -54,7 +55,7 @@ class RulesParser (object):
         keyDef = ~tilde + Word (printables) + ZeroOrMore (Literal(' ')).suppress () + equals + ZeroOrMore (Literal (' ')).suppress () + restOfLine
         eventDef = Word (noncolon) + colon
         regexDef = tilde + ZeroOrMore (White (' \t').suppress ()) + restOfLine
-        
+
         keyBlock = Group (keyDef)
         eventBlock = Group (eventDef + ZeroOrMore (keyBlock))
         regexBlock = Group (regexDef + ZeroOrMore (eventBlock))
@@ -88,7 +89,7 @@ class RulesParser (object):
     def __process_section (self, settings):
         config = OrderedDict ()
         for k, v in settings:
-            config [k] = v 
+            config [k] = v
         return config
 
     def __compile (self, config):
@@ -122,7 +123,7 @@ class RulesParser (object):
             config = config.read ()
         tokens = self.bnf.parseString (config)
         struct = tokens2dict (tokens.asList ())
-        config = OrderedDict () 
+        config = OrderedDict ()
 
         for section in struct:
             if not section in self.processors:
@@ -163,14 +164,14 @@ class RulesParser (object):
 
         return OrderedDict ([
             (k, v) for (k, v) in settings
-            if not k.startswith ('.')    
+            if not k.startswith ('.')
         ])
 
     def src (self, rule, event):
         ''' for debugging
         '''
         return self._config ['rules'][rule][event]['.src']
-    
+
     def obj (self, rule, event):
         if event in self._config ['rules'][rule]:
             return self._config ['rules'][rule][event]['.obj']
@@ -201,7 +202,7 @@ if __name__ == '__main__':
 
     [defaults]
     ~ ^
-        start: 
+        start:
             sanitize = True
             collapse = True
         end:
@@ -241,5 +242,3 @@ if __name__ == '__main__':
 
     print ("Searching")
     print (config.search ("/module/section[3]/directive[1]"))
-
-

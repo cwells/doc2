@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------
 # doc2.py
 # A utility to convert Nginx XML documentation source into various formats.
-# It also breaks up those documents into smaller fragments that can be 
+# It also breaks up those documents into smaller fragments that can be
 # referenced by module/name.
 #
 # (c) Cliff Wells, 2012  <cliff@nginx.com>
@@ -23,7 +23,7 @@ try:
     from collections import OrderedDict
 except ImportError:
     from ordereddict import OrderedDict
-    
+
 
 class Transformer (object):
     def __init__ (self, config):
@@ -55,10 +55,10 @@ class Transformer (object):
 
         xpath = self._root.getpath (elem)
         match, mo = self._cfg.search (xpath)
-        
+
         t = elem.text if event == 'start' else elem.tail
         if t is None: t = ''
-            
+
         if match is None:
             logger.warn ('No rule matching {0}, skipping...'.format (xpath))
             return
@@ -66,7 +66,7 @@ class Transformer (object):
         vars = {
             're': re,
             'string': string,
-            'event': event, 
+            'event': event,
             'elem': elem,
             'last_output': self.last_output,
             'match': mo,
@@ -74,7 +74,7 @@ class Transformer (object):
             'xpath': xpath,
             'globals': self._globals
         }
- 
+
         try:
             exec (self._cfg.obj (match, event), self._globals, vars)
         except:
@@ -90,7 +90,7 @@ class Transformer (object):
             if directive in self.directives:
                 method = getattr (self, "dd_{0}".format (directive))
                 t = method (t, **vars)
-        
+
         if t is not None:
             self.last_output = t
         return t
@@ -112,29 +112,38 @@ class Transformer (object):
         if sanitize:
             t = re.sub (ur'\xa0', ' ', t)
             t = re.sub (ur'[\u201c\u201d]', '"', t)
-            t = re.sub (ur'\u2019', "'", t)    
-            t = re.sub (ur'[\u2014\u2018]', '-', t)  
+            t = re.sub (ur'\u2019', "'", t)
+            t = re.sub (ur'[\u2014\u2018]', '-', t)
         return t
 
     def dd_collapse (self, t, collapse=True, **_):
         ''' collapse sequences of spaces and newlines, replace non-ascii quotes
         '''
         if collapse:
-            t = re.sub (ur'\s+', ' ', t)       
+            t = re.sub (ur'\s+', ' ', t)
         return t
 
-    def dd_strip (self, t, strip=False, **_):
+    def dd_strip (self, t, strip=False, debug=False, **_):
         if strip:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tstrip ({0})".format (t), file=sys.stderr)
             return t.strip ()
         return t
 
-    def dd_lstrip (self, t, lstrip=False, **_):
+    def dd_lstrip (self, t, lstrip=False, debug=False, **_):
         if lstrip:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\tlstrip ({0})".format (t), file=sys.stderr)
             return t.lstrip ()
         return t
 
-    def dd_strip (self, t, rstrip=False, **_):
+    def dd_rstrip (self, t, rstrip=False, debug=False, **_):
         if rstrip:
+            if debug:
+                print ("{xpath}".format (**_))
+                print ("\trstrip ({0})".format (t), file=sys.stderr)
             return t.rstrip ()
         return t
 
@@ -200,7 +209,7 @@ verbosity_levels = dict (debug=logging.DEBUG, info=logging.INFO, warn=logging.WA
 available_formats = [os.path.splitext (f)[0] for f in glob ("*.rules")]
 
 parser = OptionParser ()
-parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src') 
+parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src')
 parser.add_option ("-s", "--source", dest="srcdir", help="source directory for XML files", metavar="SRC")
 parser.add_option ("-d", "--destination", dest="dest_dir", help="destination directory", metavar="DIR")
 parser.add_option ("-p", "--pattern", dest="pattern", help="convert files matching pattern", metavar="PATTERN")
@@ -225,7 +234,7 @@ logger.setLevel (options.verbosity)
 rules = RulesParser ()
 rules.parse (file ('%s.rules' % options.format))
 
-parser = etree.XMLParser (dtd_validation=True) 
+parser = etree.XMLParser (dtd_validation=True)
 processor = Transformer (rules)
 logger.info (processor.description ())
 
@@ -265,12 +274,6 @@ for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
                 fragment = file (output_file, 'w')
                 fragment.write (output.getvalue ().encode ('utf-8'))
                 fragment.close ()
-                
+
                 output = StringIO ()
                 processor._newfile = False
-
-
-        
-
-
-
