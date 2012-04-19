@@ -192,10 +192,11 @@ italblock = "''{0}''"
     start:
         sanitize = True
         collapse = True
-        _doc = re.sub (ur'(\.\./)?(.+?)\.xml', ur'\2', elem.get ('doc')) if elem.get ('doc') else ""
+        _wikipage = ''.join ([p.capitalize () for p in filename.split ('_')[1:]])
+        # _doc = re.sub (ur'(\.\./)?(.+?)\.xml', ur'\2', elem.get ('doc')) if elem.get ('doc') else ""
         _id = "#{0}".format (elem.get ('id')) if elem.get ('id') else ""
         _text = "{0}" if elem.text else elem.get ('id')
-        format = "[[{0}{1}|{2}]]".format (_doc, _id, _text)
+        format = "[[{wikipage}{id}|{text}]]".format (id=_id, text=_text, wikipage=_wikipage)
 
 ~ /command(\[\d+\])?$
     start:

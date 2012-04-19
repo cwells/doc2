@@ -29,6 +29,7 @@ class Transformer (object):
     def __init__ (self, config):
         self._cfg = config
         self._root = None            # root element to start processing at
+        self._srcfile = None         # the filename currently being processed
         self._newfile = False        # flag that a new file should be generated
         self._store = {}
         self.last_output = ''
@@ -45,9 +46,13 @@ class Transformer (object):
         return self._cfg.get ('info')['directory']
 
     def set_srcfile (self, srcfile):
+        '''save a reference to the current xml file being processed
+        '''
         self._srcfile = srcfile
 
-    def root (self, root):
+    def set_root (self, root):
+        '''save a reference to the current root element
+        '''
         self._root = etree.ElementTree (root)
 
     def process_element (self, event, elem):
@@ -66,12 +71,14 @@ class Transformer (object):
         vars = {
             're': re,
             'string': string,
+            'os': os,
             'event': event,
             'elem': elem,
             'last_output': self.last_output,
             'match': mo,
             'regex': match,
             'xpath': xpath,
+            'filename': os.path.splitext (self._srcfile)[0],
             'globals': self._globals
         }
 
@@ -257,12 +264,13 @@ logger.info (processor.description ())
 
 # for each xml file
 for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
+    processor.set_srcfile (os.path.basename (srcfile))
     tree = etree.parse (srcfile, parser)
     logger.debug ("  processing: {0}".format (os.path.basename (srcfile)))
 
     # for each element, in its own output file
     for directive in tree.xpath (options.root_element):
-        processor.root (directive)
+        processor.set_root (directive)
         output = StringIO ()
 
         # process element's tree
