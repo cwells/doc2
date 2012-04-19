@@ -182,7 +182,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
     start:
         sanitize = True
         collapse = True
-        format = "``{0}``"
+        format = "''{0}''"
 
 ~ /c-func(\[\d+\])?$
     start:
