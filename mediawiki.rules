@@ -25,6 +25,7 @@ codeblock = '\n<geshi lang="nginx">{0}</geshi>\n'
 preblock = "<code>{0}</code>"
 boldblock = "'''{0}'''"
 italblock = "''{0}''"
+collapsible = "wikitable mw-collapsible mw-collapsed"
 
 ##
 # defaults
@@ -61,6 +62,7 @@ italblock = "''{0}''"
     end:
         sanitize = True
         collapse = True
+        suffix = '</div>'
         newfile = True
 
 ~ /(syntax|context|default|appeared-in)(\[1\])?$
@@ -69,16 +71,16 @@ italblock = "''{0}''"
         collapse = True
         strip = True
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
-        _starttable = "<table>" if _prev == "directive" else ""
+        _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
         _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
         _tag = elem.tag.capitalize ().replace ('-', ' ')
-        prefix = '{table}{cr}<tr><td>{tag}:</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br)
+        prefix = '{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
     end:
         sanitize = True
         collapse = True
         strip = True
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        _endtable = "</table>" if _next == "para" else ""
+        _endtable = '</table><div class=$collapsible>' if _next == "para" else ""
         suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
 
 ~ /(syntax|context|default|appeared-in)(\[\d+\])?$
@@ -93,7 +95,7 @@ italblock = "''{0}''"
         collapse = True
         strip = True
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        _endtable = "</table>" if _next == "para" else ""
+        _endtable = '</table><div class=$collapsible>' if _next == "para" else ""
         suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
 
 ~ /(syntax|context|default|appeared-in)(\[\d+\])?/value(\[\d+\])?$
