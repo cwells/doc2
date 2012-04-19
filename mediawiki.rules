@@ -193,9 +193,9 @@ italblock = "''{0}''"
         sanitize = True
         collapse = True
         _wikipage = ''.join ([p.capitalize () for p in filename.split ('_')[1:]])
-        # _doc = re.sub (ur'(\.\./)?(.+?)\.xml', ur'\2', elem.get ('doc')) if elem.get ('doc') else ""
         _id = "#{0}".format (elem.get ('id')) if elem.get ('id') else ""
         _text = "{0}" if elem.text else elem.get ('id')
+        # _anchor = '<span id="{0}">{{0}}</span>'.format (_id)
         format = "[[{wikipage}{id}|{text}]]".format (id=_id, text=_text, wikipage=_wikipage)
 
 ~ /command(\[\d+\])?$
