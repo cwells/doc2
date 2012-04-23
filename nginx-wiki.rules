@@ -1,0 +1,125 @@
+##
+# info
+##
+[info]
+description = MediaWiki formatting rules for Nginx docs
+author = Cliff Wells <cliff@nginx.com>
+version = 1.0
+license = BSD
+extension = txt
+directory = mediawiki
+
+
+##
+# text substitutions
+##
+[defines]
+nestedlist = (lambda c, re=re, xpath=xpath: len (re.findall (r'/list(\[\d+\])?(/|$)', xpath)) * c)
+cr = "\n"
+para = "\n\n"
+bold = "'''"
+ital = "''"
+list_bullet = "*"
+br = "<br>"
+codeblock = '\n<geshi lang="nginx">{0}</geshi>\n'
+preblock = "<code>{0}</code>"
+boldblock = "'''{0}'''"
+italblock = "''{0}''"
+collapsible = "wikitable mw-collapsible mw-collapsed"
+
+##
+# defaults
+##
+[defaults]
+~ ^
+    start:
+        sanitize = True
+        collapse = True
+    end:
+        sanitize = True
+        collapse = True
+
+
+##
+# rules
+##
+[rules]
+
+# discard everthing not under /module/section/directive
+~ ^/module(?!/section(\[\d+\])?/directive)
+    start:
+        discard = True
+    end:
+        discard = True
+
+~ /directive(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+    end:
+        sanitize = True
+        collapse = True
+        newfile = True
+
+~ /(syntax|context|default|appeared-in)(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
+        _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
+        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        _tag = elem.tag.capitalize ().replace ('-', ' ')
+        prefix = '{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        _endtable = '</table>' if _next == "para" else ""
+        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+
+~ /(syntax|context|default|appeared-in)(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        prefix = '{br}{name}'.format (name=_name, cr=$cr, br=$br)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        _endtable = '</table>' if _next == "para" else ""
+        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+
+~ /(syntax|context|default|appeared-in)(\[\d+\])?/value(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        format = " ''{0}'' "
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+
+~ /(syntax|context|default|appeared-in)(\[\d+\])?/literal(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        format = " <code>{0}</code> "
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+
+# default processing on anything else
+~ .*
+    start:
+	discard = True
+    end:
+	discard = True
