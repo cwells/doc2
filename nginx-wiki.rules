@@ -60,6 +60,8 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
     end:
         sanitize = True
         collapse = True
+	_directive = elem.get ('name')
+	suffix = '{cr}[http://nginx.org/en/docs/http/{0}.html#{1} official docs]'.format (filename, _directive, cr=$cr)
         newfile = True
 
 ~ /(syntax|context|default|appeared-in)(\[1\])?$
