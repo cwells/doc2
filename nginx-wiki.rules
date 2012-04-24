@@ -60,19 +60,21 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
     end:
         sanitize = True
         collapse = True
-	_directive = elem.get ('name')
-	suffix = '{cr}[http://nginx.org/en/docs/http/{0}.html#{1} Official reference]'.format (filename, _directive, cr=$cr)
+        _directive = elem.get ('name')
+        suffix = '{cr}[http://nginx.org/en/docs/http/{0}.html#{1} Official reference]'.format (filename, _directive, cr=$cr)
         newfile = True
 
 ~ /(syntax|context|default|appeared-in)(\[1\])?$
     start:
+        globals['isblock'] = elem.get ('block') == 'yes' if elem.tag == 'syntax' else globals['isblock']
         sanitize = True
         collapse = True
         strip = True
-	format = "''{0}''" if elem.tag == 'default' and elem.text else None
+        _fmt = "{{ {0} }}" if globals['isblock'] else "{0}"
+        format = "''{0}''".format (_fmt) if elem.tag == 'default' and elem.text else _fmt
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
-        _name = "'''{0}'''".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
+        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
         _tag = elem.tag.capitalize ().replace ('-', ' ')
         prefix = "{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}".format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
     end:
@@ -88,8 +90,10 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
-	format = "''{0}''" if elem.tag == 'default' and elem.text else None
-        _name = "'''{0}'''".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
+        _fmt = "{{ {0} }}" if globals['isblock'] else "{0}"
+        format = "''{0}''".format (_fmt) if elem.tag == 'default' and elem.text else _fmt
+        # format = "''{0}''" if elem.tag == 'default' and elem.text else None
+        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
         prefix = "{br}{name}".format (name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
@@ -121,9 +125,16 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
 
+~ /para(\[1\])?$
+    start:
+        globals['isblock'] = False
+        discard = True
+    end:
+        discard = True
+
 # default processing on anything else
 ~ .*
     start:
-	discard = True
+        discard = True
     end:
-	discard = True
+        discard = True
