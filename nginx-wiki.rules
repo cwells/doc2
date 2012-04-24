@@ -73,7 +73,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
         _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
         _tag = elem.tag.capitalize ().replace ('-', ' ')
-        prefix = '{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}'.format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
+        prefix = "{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}'''{name}'''".format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
     end:
         sanitize = True
         collapse = True
@@ -88,7 +88,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
         _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
-        prefix = '{br}{name}'.format (name=_name, cr=$cr, br=$br)
+        prefix = "{br}'''{name}'''".format (name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
         collapse = True
