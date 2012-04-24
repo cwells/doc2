@@ -1,5 +1,5 @@
 build/
-nginx_org/
+nginx.org/
 processed/
 *~
 *.pyc
