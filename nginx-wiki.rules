@@ -71,9 +71,9 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         strip = True
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
-        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
+        _name = "'''{0}'''".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
         _tag = elem.tag.capitalize ().replace ('-', ' ')
-        prefix = "{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}'''{name}'''".format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
+        prefix = "{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}".format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
     end:
         sanitize = True
         collapse = True
@@ -87,8 +87,8 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
-        _name = elem.xpath ('ancestor::directive')[0].get ('name') if elem.tag == 'syntax' else ''
-        prefix = "{br}'''{name}'''".format (name=_name, cr=$cr, br=$br)
+        _name = "'''{0}'''".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
+        prefix = "{br}{name}".format (name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
         collapse = True
