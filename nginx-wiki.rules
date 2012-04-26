@@ -75,8 +75,8 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
-        _isblock = elem.get ('block') == 'yes'
-        format = "{{ {0} }}" if _isblock else None
+        # _isblock = elem.get ('block') == 'yes'
+        # format = "{{ {0} }}" if _isblock else None
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name'))
         _tag = elem.tag.capitalize ().replace ('-', ' ')
@@ -85,8 +85,10 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
+        _isblock = elem.get ('block') == 'yes'
+        _block = "{ ... }" if _isblock else ""
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        suffix = "" if _next == elem.tag else "</td></tr>"
+        suffix = _block if _next == elem.tag else "{0}</td></tr>".format (_block)
 
 ~ /syntax(\[\d+\])?$
     start:
@@ -101,8 +103,11 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
+        _isblock = elem.get ('block') == 'yes'
+        _block = "{ ... }" if _isblock else ""
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        suffix = "" if _next == elem.tag else "</td></tr>"
+        suffix = _block if _next == elem.tag else "{0}</td></tr>".format (_block)
+
 
 #
 # context
