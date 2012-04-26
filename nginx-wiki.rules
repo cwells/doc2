@@ -84,7 +84,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
         _isblock = elem.get ('block') == 'yes'
-        _block = "{ ... }" if _isblock else ""
+        _block = [" ", ""][last_output [:-1] == " "] + "{ ... }" if _isblock else ""
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
         suffix = _block if _next == elem.tag else "{0}</td></tr>".format (_block)
 
@@ -102,7 +102,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
         _isblock = elem.get ('block') == 'yes'
-        _block = "{ ... }" if _isblock else ""
+        _block = [" ", ""][last_output [:-1] == " "] + "{ ... }" if _isblock else ""
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
         suffix = _block if _next == elem.tag else "{0}</td></tr>".format (_block)
 
