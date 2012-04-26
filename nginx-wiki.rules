@@ -75,8 +75,6 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
-        # _isblock = elem.get ('block') == 'yes'
-        # format = "{{ {0} }}" if _isblock else None
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name'))
         _tag = elem.tag.capitalize ().replace ('-', ' ')
