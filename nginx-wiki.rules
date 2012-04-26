@@ -2,7 +2,7 @@
 # info
 ##
 [info]
-description = MediaWiki formatting rules for Nginx docs
+description = MediaWiki formatting rules for Nginx docs (directive block only)
 author = Cliff Wells <cliff@nginx.com>
 version = 1.0
 license = BSD
@@ -57,53 +57,154 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
+        prefix = '<table class="directive-ref-table">{cr}'.format (cr=$cr)
     end:
         sanitize = True
         collapse = True
         _directive = elem.get ('name')
-        suffix = '{cr}[http://nginx.org/en/docs/http/{0}.html#{1} Official reference]'.format (filename, _directive, cr=$cr)
+        _ref = '[http://nginx.org/en/docs/http/{filename}.html#{directive} {directive}]'.format (filename=filename, directive=_directive)
+        suffix = "{cr}<tr><td>'''Reference:'''</td><td>{ref}</td></tr></table>{cr}".format (ref=_ref, cr=$cr)
         newfile = True
 
-~ /(syntax|context|default|appeared-in)(\[1\])?$
+
+#
+# syntax
+#
+~ /syntax(\[1\])?$
     start:
-        globals['isblock'] = elem.get ('block') == 'yes' if elem.tag == 'syntax' else globals['isblock']
         sanitize = True
         collapse = True
         strip = True
-        _fmt = "{{ {0} }}" if globals['isblock'] and elem.tag != 'context' else "{0}"
-        format = "''{0}''".format (_fmt) if elem.tag == 'default' and elem.text else _fmt
+        _isblock = elem.get ('block') == 'yes'
+        format = "{{ {0} }}" if _isblock else None
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
-        _starttable = '<table class="directive-ref-table">' if _prev == "directive" else ""
-        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
+        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name'))
         _tag = elem.tag.capitalize ().replace ('-', ' ')
-        prefix = "{table}{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}".format (table=_starttable, tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
+        prefix = "{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}{name}".format (tag=_tag, name=_name, cr=$cr, br=$br, bold=$bold)
     end:
         sanitize = True
         collapse = True
         strip = True
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        _endtable = '</table>' if _next == "para" else ""
-        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+        suffix = "" if _next == elem.tag else "</td></tr>"
 
-~ /(syntax|context|default|appeared-in)(\[\d+\])?$
+~ /syntax(\[\d+\])?$
     start:
         sanitize = True
         collapse = True
         strip = True
-        # _fmt = "{{ {0} }}" if globals['isblock'] else "{0}"
-        _fmt = "{{ {0} }}" if globals['isblock'] and elem.tag != 'context' else "{0}"
-        format = "''{0}''".format (_fmt) if elem.tag == 'default' and elem.text else _fmt
-        # format = "''{0}''" if elem.tag == 'default' and elem.text else None
-        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name')) if elem.tag == 'syntax' else ''
+        _isblock = elem.get ('block') == 'yes'
+        format = "{{ {0} }}" if _isblock else None
+        _name = "'''{0}''' ".format (elem.xpath ('ancestor::directive')[0].get ('name'))
         prefix = "{br}{name}".format (name=_name, cr=$cr, br=$br)
     end:
         sanitize = True
         collapse = True
         strip = True
         _next = elem.getnext ().tag if elem.getnext() is not None else ""
-        _endtable = '</table>' if _next == "para" else ""
-        suffix = "" if _next == elem.tag else "</td></tr>" + _endtable
+        suffix = "" if _next == elem.tag else "</td></tr>"
 
+#
+# context
+#
+~ /context(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
+        _tag = elem.tag.capitalize ().replace ('-', ' ')
+        prefix = "{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}".format (tag=_tag, cr=$cr, br=$br, bold=$bold)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+~ /context(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        prefix = $br
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+#
+# default
+#
+~ /default(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _isblock = elem.xpath ('ancestor::directive/syntax')[0].get ('block') == 'yes'
+        _fmt = "{{ {0} }}" if _isblock else "{0}"
+        format = "''{0}''".format (_fmt) if elem.text else _fmt
+        _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
+        _tag = elem.tag.capitalize ().replace ('-', ' ')
+        prefix = "{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}".format (tag=_tag, cr=$cr, br=$br, bold=$bold)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+~ /default(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _isblock = elem.xpath ('ancestor::directive/syntax')[0].get ('block') == 'yes'
+        _fmt = "{{ {0} }}" if _isblock else "{0}"
+        format = "''{0}''".format (_fmt) if elem.text else _fmt
+        prefix = "{br}".format (cr=$cr, br=$br)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+#
+# appeared-in
+#
+~ /appeared-in(\[1\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        _tag = elem.tag.capitalize ().replace ('-', ' ')
+        prefix = "{cr}<tr><td>{bold}{tag}:{bold}</td>{cr}<td>{cr}".format (tag=_tag, cr=$cr, br=$br, bold=$bold)
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+~ /appeared-in(\[\d+\])?$
+    start:
+        sanitize = True
+        collapse = True
+        strip = True
+        prefix = $br
+    end:
+        sanitize = True
+        collapse = True
+        strip = True
+        _next = elem.getnext ().tag if elem.getnext() is not None else ""
+        suffix = "" if _next == elem.tag else "</td></tr>"
+
+#
+# rest...
+#
 ~ /(syntax|context|default|appeared-in)(\[\d+\])?/value(\[\d+\])?$
     start:
         sanitize = True
@@ -125,13 +226,6 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         strip = True
-
-~ /para(\[1\])?$
-    start:
-        globals['isblock'] = False
-        discard = True
-    end:
-        discard = True
 
 # default processing on anything else
 ~ .*
