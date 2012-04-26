@@ -147,7 +147,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
         _isblock = elem.xpath ('ancestor::directive/syntax')[0].get ('block') == 'yes'
-        _fmt = "{{ {0} }}" if _isblock else "{0}"
+        _fmt = "{{ {0} }}" if _isblock and elem.text else "{0}"
         format = "''{0}''".format (_fmt) if elem.text else _fmt
         _prev = elem.getprevious ().tag if elem.getprevious () is not None else elem.getparent ().tag
         _tag = elem.tag.capitalize ().replace ('-', ' ')
@@ -165,7 +165,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         collapse = True
         strip = True
         _isblock = elem.xpath ('ancestor::directive/syntax')[0].get ('block') == 'yes'
-        _fmt = "{{ {0} }}" if _isblock else "{0}"
+        _fmt = "{{ {0} }}" if _isblock and elem.text else "{0}"
         format = "''{0}''".format (_fmt) if elem.text else _fmt
         prefix = "{br}".format (cr=$cr, br=$br)
     end:
