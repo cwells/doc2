@@ -15,9 +15,15 @@ import os
 import time
 from datetime import datetime, timedelta
 import httplib
+from optparse import OptionParser
+
+parser = OptionParser ()
+parser.set_defaults (cutoff=30)
+parser.add_option ("-c", "--cutoff", dest="cutoff", help="only process files newer than N minutes", metavar="MINUTES", type=int)
+(options, args) = parser.parse_args ()
 
 # assume that SVN is updated less than 30 minutes prior to now
-cutoff = datetime.now () - timedelta (minutes=30)
+cutoff = datetime.now () - timedelta (minutes=options.cutoff)
 
 changes = []
 for root, folders, files in os.walk ('nginx.org/xml/en/docs/http/'):
