@@ -18,8 +18,9 @@ import httplib
 from optparse import OptionParser
 
 parser = OptionParser ()
-parser.set_defaults (cutoff=30)
+parser.set_defaults (cutoff=30, all=False)
 parser.add_option ("-c", "--cutoff", dest="cutoff", help="only process files newer than N minutes", metavar="MINUTES", type=int)
+parser.add_option ("-a", "--all", action="store_true", dest="all", help="process all files", metavar="")
 (options, args) = parser.parse_args ()
 
 # assume that SVN is updated less than 30 minutes prior to now
@@ -36,7 +37,7 @@ for root, folders, files in os.walk ('nginx.org/xml/en/docs/http/'):
         # only files changed within last <cutoff> minutes
         st = os.stat (os.path.join (root, filename))    
         mtime = datetime.fromtimestamp (st.st_mtime)
-        if mtime < cutoff:
+        if mtime < cutoff and not options.all:
             continue
 
         # convert filename to wiki page style
