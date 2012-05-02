@@ -234,8 +234,8 @@ verbosity_levels = dict (debug=logging.DEBUG, info=logging.INFO, warn=logging.WA
 available_formats = [os.path.splitext (f)[0] for f in glob ("*.rules")]
 
 parser = OptionParser ()
-parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', srcdir='src')
-parser.add_option ("-s", "--source", dest="srcdir", help="source directory for XML files", metavar="SRC")
+parser.set_defaults (format='text', dest_dir='processed', pattern='*.xml', verbosity='warn', root_element='//directive', fname_attribute='name', src_dir='src')
+parser.add_option ("-s", "--source", dest="src_dir", help="source directory for XML files", metavar="SRC")
 parser.add_option ("-d", "--destination", dest="dest_dir", help="destination directory", metavar="DIR")
 parser.add_option ("-p", "--pattern", dest="pattern", help="convert files matching pattern", metavar="PATTERN")
 parser.add_option ("-r", "--root", dest="root_element", help="the root element, files will be split at every one of these", metavar="ROOT")
@@ -264,7 +264,7 @@ processor = Transformer (rules)
 logger.info (processor.description ())
 
 # for each xml file
-for root, folders, files in os.walk (options.srcdir):
+for root, folders, files in os.walk (options.src_dir):
     for filename in files:
         if not fnmatch (filename, options.pattern):
             continue
@@ -289,7 +289,7 @@ for root, folders, files in os.walk (options.srcdir):
                         raise
 
                 if processor._newfile:
-                    target_dir = os.path.join (options.dest_dir, processor.directory (), os.path.splitext (os.path.basename (srcfile))[0])
+                    target_dir = os.path.join (options.dest_dir, processor.directory (), root.replace (options.src_dir, ''), os.path.splitext (os.path.basename (srcfile))[0])
                     output_file = '{0}.{1}'.format (os.path.join (target_dir, element.get (options.fname_attribute)), processor.extension ())
                     logger.debug ("      -> {0}".format (output_file))
 
