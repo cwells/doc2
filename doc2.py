@@ -14,6 +14,7 @@ from __future__ import print_function
 import os, sys, errno, traceback
 import logging; logging.basicConfig ()
 import re, string
+from fnmatch import fnmatch
 from glob import glob
 from cStringIO import StringIO
 from lxml import etree
@@ -263,42 +264,46 @@ processor = Transformer (rules)
 logger.info (processor.description ())
 
 # for each xml file
-for srcfile in glob (os.path.join (options.srcdir, options.pattern)):
-    processor.set_srcfile (os.path.basename (srcfile))
-    tree = etree.parse (srcfile, parser)
-    logger.debug ("  processing: {0}".format (os.path.basename (srcfile)))
+for root, folders, files in os.walk (options.srcdir):
+    for filename in files:
+        if not fnmatch (filename, options.pattern):
+            continue
+        processor.set_srcfile (filename)
+        srcfile = os.path.join (root, filename)
+        tree = etree.parse (srcfile, parser)
+        logger.debug ("  processing: {0}".format (os.path.basename (srcfile)))
 
-    # for each element, in its own output file
-    for directive in tree.xpath (options.root_element):
-        processor.set_root (directive)
-        output = StringIO ()
+        # for each element, in its own output file
+        for directive in tree.xpath (options.root_element):
+            processor.set_root (directive)
+            output = StringIO ()
 
-        # process element's tree
-        for event, element in etree.iterwalk (directive, events=('start', 'end')):
-            t = processor.process_element (event, element)
-            if t is not None:
-                try:
-                    output.write (t)
-                except UnicodeError, e:
-                    print (u"\n\nUnicode error processing the following text:\n{0}\n\n".format (t), file=sys.stderr)
-                    raise
-
-            if processor._newfile:
-                target_dir = os.path.join (options.dest_dir, processor.directory (), os.path.splitext (os.path.basename (srcfile))[0])
-                output_file = '{0}.{1}'.format (os.path.join (target_dir, element.get (options.fname_attribute)), processor.extension ())
-                logger.debug ("      -> {0}".format (output_file))
-
-                # mkdir -p
-                try:
-                    os.makedirs (target_dir)
-                except OSError, e:
-                    if e.errno != errno.EEXIST:
+            # process element's tree
+            for event, element in etree.iterwalk (directive, events=('start', 'end')):
+                t = processor.process_element (event, element)
+                if t is not None:
+                    try:
+                        output.write (t)
+                    except UnicodeError, e:
+                        print (u"\n\nUnicode error processing the following text:\n{0}\n\n".format (t), file=sys.stderr)
                         raise
 
-                # write output file
-                fragment = file (output_file, 'w')
-                fragment.write (output.getvalue ().encode ('utf-8'))
-                fragment.close ()
+                if processor._newfile:
+                    target_dir = os.path.join (options.dest_dir, processor.directory (), os.path.splitext (os.path.basename (srcfile))[0])
+                    output_file = '{0}.{1}'.format (os.path.join (target_dir, element.get (options.fname_attribute)), processor.extension ())
+                    logger.debug ("      -> {0}".format (output_file))
 
-                output = StringIO ()
-                processor._newfile = False
+                    # mkdir -p
+                    try:
+                        os.makedirs (target_dir)
+                    except OSError, e:
+                        if e.errno != errno.EEXIST:
+                            raise
+
+                    # write output file
+                    fragment = file (output_file, 'w')
+                    fragment.write (output.getvalue ().encode ('utf-8'))
+                    fragment.close ()
+
+                    output = StringIO ()
+                    processor._newfile = False
