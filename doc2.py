@@ -268,7 +268,7 @@ for root, folders, files in os.walk (options.src_dir):
     for filename in files:
         if not fnmatch (filename, options.pattern):
             continue
-        processor.set_srcfile (filename)
+        processor.set_srcfile (os.path.join (root.replace (options.src_dir, ''), filename))
         srcfile = os.path.join (root, filename)
         tree = etree.parse (srcfile, parser)
         logger.debug ("  processing: {0}".format (os.path.basename (srcfile)))

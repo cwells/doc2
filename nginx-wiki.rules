@@ -62,7 +62,7 @@ collapsible = "wikitable mw-collapsible mw-collapsed"
         sanitize = True
         collapse = True
         _directive = elem.get ('name')
-        _ref = '[http://nginx.org/en/docs/http/{filename}.html#{directive} {directive}]'.format (filename=filename, directive=_directive)
+        _ref = '[http://nginx.org/en/docs/{filename}.html#{directive} {directive}]'.format (filename=filename, directive=_directive)
         suffix = "{cr}<tr><td>'''Reference:'''</td><td>{ref}</td></tr></table>{cr}".format (ref=_ref, cr=$cr)
         newfile = True
 
